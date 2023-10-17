@@ -114,9 +114,10 @@ app.post("/submituser", async (req, res) => {
 
 			res.redirect("/home");
 		} else {
-			res.render("errorMessage", {
-				error: "Failed to create user.",
-			});
+			// res.render("errorMessage", {
+			// 	error: "Failed to create user.",
+			// });
+            console.log("error in creating the user")
 		}
 	}
 });
@@ -171,7 +172,10 @@ app.post("/logout", (req, res) => {
 
 //does not require session auth - public
 app.get("/home", async (req, res) => {
-	res.render("home")
+    auth = req.session.username
+	res.render("home", {
+        auth
+    })
 });
 
 //requires session auth
