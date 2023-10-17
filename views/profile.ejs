@@ -1,7 +1,18 @@
 <%- include("templates/header") %>
+<script type="text/javascript"> 
+    $.cloudinary.config({ cloud_name: '<%= process.env.CLOUDINARY_CLOUD_NAME %>', secure: true});
+</script>
 
 <div class="user-info">
+    <% if (image_uuid) { %>
+        <div class="image">
+            <script type="text/javascript">document.write($.cloudinary.imageTag('<%- image_uuid %>', {height: 100, width: 100, crop: "fit"}).toHtml());</script>
+        </div>
+    <% } %>
     <h1><%= username %></h1>
+    <form action="/profile/upload/image" method="get">
+        <button style="margin-bottom: 7px;">PFP</button>
+    </form>
 </div>
 
 <div class="option-btns">
