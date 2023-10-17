@@ -9,7 +9,7 @@ const saltRounds = 12;
 
 const database = include("database_connection");
 const db_utils = include("database/db_utils");
-// const db_users = include("database/users");
+const db_users = include("database/users");
 // const db_uploads = include("database/uploads");
 const success = db_utils.printMySQLVersion();
 
@@ -149,7 +149,7 @@ app.post("/loggingin", async (req, res) => {
 			console.log(
 				"invalid number of users matched: " + results.length + " (expected 1)."
 			);
-			res.render("login", {
+			res.render("landing_login", {
 				error: "User and password not found.",
 			});
 			return;
@@ -158,7 +158,7 @@ app.post("/loggingin", async (req, res) => {
 
 	console.log("user not found");
 	//user and password combination not found
-	res.render("login", {
+	res.render("landing_login", {
 		error: "User and password not found.",
 	});
 });
@@ -179,7 +179,11 @@ app.get("/profile", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
-		res.render("profile")
+        username = req.session.username
+
+		res.render("profile", {
+            username
+        })
 	}
 });
 
@@ -193,6 +197,7 @@ app.get("/profile/upload", (req, res) => {
 });
 
 //requires session auth
+//this is for uploading a user pfp
 app.post("/profile/upload/image", upload.single("image"), async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
