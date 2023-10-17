@@ -10,6 +10,7 @@ const saltRounds = 12;
 const database = include("database_connection");
 const db_utils = include("database/db_utils");
 const db_users = include("database/users");
+const db_image = include("database/image")
 // const db_uploads = include("database/uploads");
 const success = db_utils.printMySQLVersion();
 
@@ -114,9 +115,10 @@ app.post("/submituser", async (req, res) => {
 
 			res.redirect("/home");
 		} else {
-			res.render("errorMessage", {
-				error: "Failed to create user.",
-			});
+			// res.render("errorMessage", {
+			// 	error: "Failed to create user.",
+			// });
+            console.log("error in creating the user")
 		}
 	}
 });
@@ -171,7 +173,10 @@ app.post("/logout", (req, res) => {
 
 //does not require session auth - public
 app.get("/home", async (req, res) => {
-	res.render("home")
+    auth = req.session.username
+	res.render("home", {
+        auth
+    })
 });
 
 //requires session auth
@@ -180,10 +185,29 @@ app.get("/profile", async (req, res) => {
 		res.redirect("/");
 	} else {
         username = req.session.username
+        user_id = req.session.user_id
 
-		res.render("profile", {
-            username
+        let results = await db_image.getPFP({
+            user_id: user_id
         })
+
+        if (results) {
+            if (results.length == 1) {
+
+                image_uuid = results[0].image_uuid
+
+                res.render("profile", {
+                    username,
+                    image_uuid
+                })
+
+            } else {
+                res.render("profile", {
+                    username,
+                    image_uuid: false
+                })
+            }
+        } 
 	}
 });
 
@@ -195,6 +219,14 @@ app.get("/profile/upload", (req, res) => {
 		res.render("thread_upload");
 	}
 });
+
+app.get("/profile/upload/image", (req, res) => {
+    if (!isValidSession(req)) {
+		res.redirect("/");
+	} else {
+		res.render("pfp_upload");
+	}
+})
 
 //requires session auth
 //this is for uploading a user pfp
@@ -211,6 +243,19 @@ app.post("/profile/upload/image", upload.single("image"), async (req, res) => {
 				try {
                     // the image ID
 					console.log(result.public_id);
+
+                    let success = await db_image.addPFP({
+                        image_uuid: result.public_id,
+                        user_id: req.session.user_id
+                    })
+
+                    if (success) {
+                        res.redirect("/profile")
+                    } else {
+                        res.render("upload_status", {
+                            status: "Unsuccessful.",
+                        });
+                    }
 
 				} catch (err) {
 					console.log(err);

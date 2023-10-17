@@ -281,8 +281,5 @@ nav button:hover::before  {
 
 /* upload an image for pfp */
 .image {
-    border: solid black 1px;
-    width: 75%;
-    margin-left: 12.5%;
-    padding: 10px;
+    margin-top: 7px;
 }
