@@ -1,0 +1,18 @@
+<%- include("templates/header") %>
+
+<form action="/profile/upload/image" method="post" enctype="multipart/form-data" class="image">
+    <h3>Upload an image</h3>
+    <div class="file-button">
+        <label>
+            <input class="file-input" type="file" name="image"/>
+        </label>
+    </div>
+    &nbsp;
+    <div>
+        <button type="submit">Upload
+            <span><i class="fas fa-image"></i></span>
+        </button>
+    </div>
+</form>
+
+<%- include("templates/footer") %>
