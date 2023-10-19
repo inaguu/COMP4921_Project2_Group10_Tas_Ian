@@ -173,10 +173,9 @@ app.post("/logout", (req, res) => {
 
 //does not require session auth - public
 app.get("/home", async (req, res) => {
-    auth = req.session.username
 	res.render("home", {
-        auth
-    })
+		auth: req.session.authenticated
+	})
 });
 
 //requires session auth
@@ -198,13 +197,15 @@ app.get("/profile", async (req, res) => {
 
                 res.render("profile", {
                     username,
-                    image_uuid
+                    image_uuid,
+					auth: req.session.authenticated
                 })
 
             } else {
                 res.render("profile", {
                     username,
-                    image_uuid: false
+                    image_uuid: false,
+					auth: req.session.authenticated
                 })
             }
         } 
@@ -216,7 +217,9 @@ app.get("/profile/upload", (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
-		res.render("thread_upload");
+		res.render("thread_upload", {
+			auth: req.session.authenticated
+		});
 	}
 });
 
@@ -224,7 +227,9 @@ app.get("/profile/upload/image", (req, res) => {
     if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
-		res.render("pfp_upload");
+		res.render("pfp_upload", {
+			auth: req.session.authenticated
+		});
 	}
 })
 
@@ -254,6 +259,7 @@ app.post("/profile/upload/image", upload.single("image"), async (req, res) => {
                     } else {
                         res.render("upload_status", {
                             status: "Unsuccessful.",
+							auth: req.session.authenticated
                         });
                     }
 
@@ -261,6 +267,7 @@ app.post("/profile/upload/image", upload.single("image"), async (req, res) => {
 					console.log(err);
 					res.render("upload_status", {
 						status: "Unsuccessful.",
+						auth: req.session.authenticated
 					});
 				}
 			}
@@ -292,7 +299,9 @@ app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
 	res.status(404);
-	res.render("404");
+	res.render("404", {
+		auth: req.session.authenticated
+	});
 });
 
 app.listen(port, () => {
