@@ -169,10 +169,18 @@ app.post("/logout", (req, res) => {
 
 //does not require session auth - public
 app.get("/home", async (req, res) => {
+
+	// let results = await db_thread.getAllThreads()
+
 	res.render("home", {
 		auth: req.session.authenticated,
+		// results: results
 	});
 });
+
+app.get("/thread/:code", (req, res) => {
+	res.render("thread")
+})
 
 //requires session auth
 app.get("/profile", async (req, res) => {
@@ -182,24 +190,32 @@ app.get("/profile", async (req, res) => {
 		username = req.session.username;
 		user_id = req.session.user_id;
 
-		let results = await db_image.getPFP({
+		let image = await db_image.getPFP({
 			user_id: user_id,
 		});
 
-		if (results) {
-			if (results.length == 1) {
-				image_uuid = results[0].image_uuid;
+		req.session.image_uuid = image[0].image_uuid
+
+		// let results = await db_thread.getUserThreads({
+		// 	user_id: user_id
+		// })
+
+		if (image) {
+			if (image.length == 1) {
+				image_uuid = image[0].image_uuid;
 
 				res.render("profile", {
-					username,
-					image_uuid,
+					username: username,
+					image_uuid: image_uuid,
 					auth: req.session.authenticated,
+					// results: results
 				});
 			} else {
 				res.render("profile", {
 					username,
 					image_uuid: false,
 					auth: req.session.authenticated,
+					// results: results
 				});
 			}
 		}
@@ -217,7 +233,7 @@ app.get("/profile/upload", (req, res) => {
 	}
 });
 
-app.post("/profile/upload/thread", async (req, res) => {
+app.post("/profile/upload/thread", (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
@@ -225,22 +241,72 @@ app.post("/profile/upload/thread", async (req, res) => {
 		let title = req.body.thread_title
 		let desc = req.body.thread_desc
 		let curr_date = new Date().toDateString();
+		
+		// var results = await db_uploads.threadUpload({
+		// 	title: title,
+		// 	description: desc,
+		// 	created_date: curr_date,
+		// 	edit_date: curr_date,
+		// 	user_id: user_id
+		// })
 
-		var results = await db_uploads.threadUpload({
-			title: title,
-			description: desc,
-			created_date: curr_date,
-			edit_date: curr_date,
-			user_id: user_id
-		})
-
-		if (results) {
-			res.redirect("/profile")
-		} else {
-			console.log(results)
-		}
+		// if (results) {
+		 	res.redirect("/profile")
+		// } else {
+		// 	console.log(results)
+		// }
 	}
 })
+
+// used for updating a thread
+app.post("/profile/update/thread/:thread_id", async (req, res) => {
+	if (!isValidSession(req)) {
+		res.redirect("/");
+	} else {
+		let data = await db_uploads.getUploadRow({
+			uploads_id: req.params.uploads_id,
+		});
+
+		if (data[0].active == 1) {
+			await db_uploads.updateActive({
+				active: 0,
+				uploads_id: req.params.uploads_id,
+			});
+			res.redirect("/profile");
+		} else {
+			await db_uploads.updateActive({
+				active: 1,
+				uploads_id: req.params.uploads_id,
+			});
+			res.redirect("/profile");
+		}
+	}
+});
+
+// used for updating the active status of a thread
+app.post("/profile/update/thread/active/:thread_id", async (req, res) => {
+	if (!isValidSession(req)) {
+		res.redirect("/");
+	} else {
+		let data = await db_uploads.getUploadRow({
+			uploads_id: req.params.uploads_id,
+		});
+
+		if (data[0].active == 1) {
+			await db_uploads.updateActive({
+				active: 0,
+				uploads_id: req.params.uploads_id,
+			});
+			res.redirect("/profile");
+		} else {
+			await db_uploads.updateActive({
+				active: 1,
+				uploads_id: req.params.uploads_id,
+			});
+			res.redirect("/profile");
+		}
+	}
+});
 
 app.get("/profile/upload/image", (req, res) => {
 	if (!isValidSession(req)) {

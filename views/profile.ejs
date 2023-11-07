@@ -7,13 +7,15 @@
 <div class="user-info">
     <% if (image_uuid) { %>
         <div class="image">
-            <script type="text/javascript">document.write($.cloudinary.imageTag('<%- image_uuid %>', {height: 100, width: 100, crop: "fit"}).toHtml());</script>
+            <a href="/profile/upload/image"><script type="text/javascript">document.write($.cloudinary.imageTag('<%- image_uuid %>', {height: 100, width: 100, crop: "fit"}).toHtml());</script></a>
         </div>
+    <% } else { %>
+        <form action="/profile/upload/image" method="get">
+            <button style="margin-bottom: 7px;">Upload PFP</button>
+        </form>
     <% } %>
     <h1><%= username %></h1>
-    <form action="/profile/upload/image" method="get">
-        <button style="margin-bottom: 7px;">PFP</button>
-    </form>
+    
 </div>
 
 <div class="option-btns">
