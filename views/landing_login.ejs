@@ -23,15 +23,13 @@
             <div class="panel-body" style="padding-top:20px" >
                 <form method="post" action="/loggingin">
                     <div style="margin-bottom: 15px" class="input-group">
-                        <input id="login-email" type="email" class="form-control" name="email" placeholder="email">
+                        <input id="login-email" type="email" class="form-control" name="email" placeholder="email" required pattern=".{,100}"
+                        title="Required field">
                     </div>
                     <div style="margin-bottom: 15px" class="input-group">
-                        <input id="login-password" type="password" class="form-control" name="password" placeholder="password">
+                        <input id="login-password" type="password" class="form-control" name="password" placeholder="password" required pattern="(?=.*[\+\*\?\^\$\\\.\[\]\{\}\(\)\|\/])(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{10,}"
+                        title="Password must contain at least one number, one symbol, one uppercase and lowercase letter, and at least 10 or more characters.">
                     </div>
-                    
-                    <%  if (error != "none") { %>
-                        <div style="padding-left: 15px; font-size:85%;"><%= error %> </div>
-                    <% } %>
 
                     <div class="btn" style="margin-top:15px">						
                         <button class="btn-login" type="submit">Login</button>

@@ -9,8 +9,9 @@ const saltRounds = 12;
 
 const database = include("database_connection");
 const db_utils = include("database/db_utils");
+const db_tables = include("database/create_table");
 const db_users = include("database/users");
-const db_image = include("database/image")
+const db_image = include("database/image");
 // const db_uploads = include("database/uploads");
 const success = db_utils.printMySQLVersion();
 
@@ -85,14 +86,9 @@ app.post("/submituser", async (req, res) => {
 
 	var hashedPassword = bcrypt.hashSync(password, saltRounds);
 
-	if (!username) {
-		res.redirect("/signup?missing=username");
-	} else if (!email) {
-		res.redirect("/signup?missing=email");
-	} else if (!password) {
-		res.redirect("/signup?missing=password");
-	} else {
-		var success = await db_users.createUser({
+	let success = await db_tables.create_user_table();
+	if (success) {
+		success = await db_users.createUser({
 			username: username,
 			email: email,
 			hashedPassword: hashedPassword,
@@ -107,7 +103,6 @@ app.post("/submituser", async (req, res) => {
 				hashedPassword: password,
 			});
 			req.session.authenticated = true;
-			req.session.user_type = results[0].user_type;
 			req.session.username = results[0].username;
 			req.session.user_id = results[0].user_id;
 			req.session.cookie.maxAge = expireTime;
@@ -118,8 +113,10 @@ app.post("/submituser", async (req, res) => {
 			// res.render("errorMessage", {
 			// 	error: "Failed to create user.",
 			// });
-            console.log("error in creating the user")
+			console.log("error in creating the user");
 		}
+	} else {
+		console.log("Server: Error creating tables in database.");
 	}
 });
 
@@ -137,7 +134,6 @@ app.post("/loggingin", async (req, res) => {
 			//there should only be 1 user in the db that matches
 			if (bcrypt.compareSync(password, results[0].hashedPassword)) {
 				req.session.authenticated = true;
-				req.session.user_type = results[0].user_type;
 				req.session.username = results[0].username;
 				req.session.user_id = results[0].user_id;
 				req.session.cookie.maxAge = expireTime;
@@ -174,8 +170,8 @@ app.post("/logout", (req, res) => {
 //does not require session auth - public
 app.get("/home", async (req, res) => {
 	res.render("home", {
-		auth: req.session.authenticated
-	})
+		auth: req.session.authenticated,
+	});
 });
 
 //requires session auth
@@ -183,32 +179,30 @@ app.get("/profile", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
-        username = req.session.username
-        user_id = req.session.user_id
+		username = req.session.username;
+		user_id = req.session.user_id;
 
-        let results = await db_image.getPFP({
-            user_id: user_id
-        })
+		let results = await db_image.getPFP({
+			user_id: user_id,
+		});
 
-        if (results) {
-            if (results.length == 1) {
+		if (results) {
+			if (results.length == 1) {
+				image_uuid = results[0].image_uuid;
 
-                image_uuid = results[0].image_uuid
-
-                res.render("profile", {
-                    username,
-                    image_uuid,
-					auth: req.session.authenticated
-                })
-
-            } else {
-                res.render("profile", {
-                    username,
-                    image_uuid: false,
-					auth: req.session.authenticated
-                })
-            }
-        } 
+				res.render("profile", {
+					username,
+					image_uuid,
+					auth: req.session.authenticated,
+				});
+			} else {
+				res.render("profile", {
+					username,
+					image_uuid: false,
+					auth: req.session.authenticated,
+				});
+			}
+		}
 	}
 });
 
@@ -218,20 +212,20 @@ app.get("/profile/upload", (req, res) => {
 		res.redirect("/");
 	} else {
 		res.render("thread_upload", {
-			auth: req.session.authenticated
+			auth: req.session.authenticated,
 		});
 	}
 });
 
 app.get("/profile/upload/image", (req, res) => {
-    if (!isValidSession(req)) {
+	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
 		res.render("pfp_upload", {
-			auth: req.session.authenticated
+			auth: req.session.authenticated,
 		});
 	}
-})
+});
 
 //requires session auth
 //this is for uploading a user pfp
@@ -246,28 +240,27 @@ app.post("/profile/upload/image", upload.single("image"), async (req, res) => {
 			"data:image/octet-stream;base64," + buf64,
 			async (result) => {
 				try {
-                    // the image ID
+					// the image ID
 					console.log(result.public_id);
 
-                    let success = await db_image.addPFP({
-                        image_uuid: result.public_id,
-                        user_id: req.session.user_id
-                    })
+					let success = await db_image.addPFP({
+						image_uuid: result.public_id,
+						user_id: req.session.user_id,
+					});
 
-                    if (success) {
-                        res.redirect("/profile")
-                    } else {
-                        res.render("upload_status", {
-                            status: "Unsuccessful.",
-							auth: req.session.authenticated
-                        });
-                    }
-
+					if (success) {
+						res.redirect("/profile");
+					} else {
+						res.render("upload_status", {
+							status: "Unsuccessful.",
+							auth: req.session.authenticated,
+						});
+					}
 				} catch (err) {
 					console.log(err);
 					res.render("upload_status", {
 						status: "Unsuccessful.",
-						auth: req.session.authenticated
+						auth: req.session.authenticated,
 					});
 				}
 			}
@@ -300,7 +293,7 @@ app.use(express.static(__dirname + "/public"));
 app.get("*", (req, res) => {
 	res.status(404);
 	res.render("404", {
-		auth: req.session.authenticated
+		auth: req.session.authenticated,
 	});
 });
 

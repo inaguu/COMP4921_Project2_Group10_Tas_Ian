@@ -24,26 +24,17 @@
             <div class="panel-body" style="padding-top:20px" >
                 <form method="post" action="/submituser">
                     <div style="margin-bottom: 15px" class="input-group">
-                        <input id="login-username" type="username" class="form-control" name="username" placeholder="username">
+                        <input id="login-username" type="username" class="form-control" name="username" placeholder="username"  required pattern=".{3,25}"
+                        title="User name must contain at least 3 characters to a maximum of 25 characters.">
                     </div>
                     <div style="margin-bottom: 15px" class="input-group">
-                        <input id="login-email" type="email" class="form-control" name="email" placeholder="email">
+                        <input id="login-email" type="email" class="form-control" name="email" placeholder="email"  required pattern=".{,100}"
+                        title="Must contain a valid email.">
                     </div>
                     <div style="margin-bottom: 15px" class="input-group">
-                        <input id="login-password" type="password" class="form-control" name="password" placeholder="password">
+                        <input id="login-password" type="password" class="form-control" name="password" placeholder="password" required pattern="(?=.*[\+\*\?\^\$\\\.\[\]\{\}\(\)\|\/])(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{10,}"
+                        title="Password must contain at least one number, one symbol, one uppercase and lowercase letter, and at least 10 or more characters.">
                     </div>
-
-                    <% if (missing == "username") { %>
-                        <div style="padding-left: 15px; font-size:85%;">Please enter a username (required)</div> 
-                    <% } %>
-
-                    <% if (missing == "email") { %>
-                        <div style="padding-left: 15px; font-size:85%;">Please enter a email (required)</div> 
-                    <% } %>
-
-                    <% if (missing == "password") { %>
-                        <div style="padding-left: 15px; font-size:85%;">Please enter a password (required)</div> 
-                    <% } %>
 
                     <div style="margin-top:15px" class="btn">						
                         <button class="btn-signup" type="submit">Sign Up</button>
