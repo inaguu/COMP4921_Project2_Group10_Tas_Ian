@@ -217,6 +217,31 @@ app.get("/profile/upload", (req, res) => {
 	}
 });
 
+app.post("/profile/upload/thread", async (req, res) => {
+	if (!isValidSession(req)) {
+		res.redirect("/");
+	} else {
+		let user_id = req.session.user_id
+		let title = req.body.thread_title
+		let desc = req.body.thread_desc
+		let curr_date = new Date().toDateString();
+
+		var results = await db_uploads.threadUpload({
+			title: title,
+			description: desc,
+			created_date: curr_date,
+			edit_date: curr_date,
+			user_id: user_id
+		})
+
+		if (results) {
+			res.redirect("/profile")
+		} else {
+			console.log(results)
+		}
+	}
+})
+
 app.get("/profile/upload/image", (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");

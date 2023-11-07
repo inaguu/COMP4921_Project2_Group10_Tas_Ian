@@ -1,3 +1,17 @@
 <%- include("templates/header") %>
 
+<div class="upload-thread">
+    Thread Upload
+</div>
+
+<div class="profile-divider"></div>
+
+<br>
+
+<form action="/profile/upload/thread" method="POST" class="thread-info">
+    <h3>Upload a Thread</h3>
+    <input required placeholder="Title" type="text" name="thread-title" id="thread_title" class="thread-title">
+    <textarea required placeholder="Description" name="thread-desc" id="thread_desc" cols="30" rows="10"></textarea>
+</form>
+
 <%- include("templates/footer") %>
