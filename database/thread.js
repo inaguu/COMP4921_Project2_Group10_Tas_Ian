@@ -166,6 +166,30 @@ async function updateThreadInfo(postData) {
 	}
 }
 
+async function getThreadTitleSearch(postData) {
+    let getThreadTitleSearchSQL = `
+		SELECT *, MATCH(title) AGAINST (:search) AS score
+		FROM thread
+		WHERE MATCH(title) AGAINST (:search) > 0
+		ORDER BY score desc;
+    `
+
+    let params = {
+		search: postData.search
+    }
+
+    try {
+		const results = await database.query(getThreadTitleSearchSQL, params);
+		console.log("Successfully got thread title after search");
+        console.log(results[0])
+		return results[0]
+	} catch (err) {
+		console.log("Error getting thread title after search");
+		console.log(err);
+		return false;
+	}
+}
+
 module.exports = {
 	getAllThreads,
     getUserThreads,
@@ -173,5 +197,6 @@ module.exports = {
 	getThreadRow,
 	updateThreadActive,
 	getThread,
-	updateThreadInfo
+	updateThreadInfo,
+	getThreadTitleSearch
 };

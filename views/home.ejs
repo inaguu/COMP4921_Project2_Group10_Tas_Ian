@@ -1,7 +1,14 @@
 <%- include("templates/header") %>
+
 <div class="home-title">
     <h1>All Sushi Threads</h1>
 </div>
+
+<br>
+
+<form action="/home/search" method="POST">
+    <input id="searchbar" type="text" name="search" placeholder="Search Thread Titles.."> 
+</form>
 
 <br>
 
@@ -11,7 +18,7 @@
 
 <div class="home-table">
     <div class="table-info">
-        <table>
+        <table id="thread">
             <tr>
                 <th class="number">#</th>
                 <th>Title</th>

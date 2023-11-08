@@ -182,6 +182,22 @@ app.get("/home", async (req, res) => {
 	});
 });
 
+app.post("/home/search", async (req, res) => {
+	let search = req.body.search
+
+	console.log(search)
+
+	let results = await db_thread.getThreadTitleSearch({
+		search: search
+	})
+
+	res.render("home", {
+		auth: req.session.authenticated,
+		results: results,
+		base_url: base_url,
+	})
+})
+
 app.get("/thread/:code", async (req, res) => {
 	let results = await db_thread.getThread({
 		short_url: req.params.code,
@@ -219,13 +235,11 @@ app.get("/profile", async (req, res) => {
 		let image = await db_image.getPFP({
 			user_id: user_id,
 		});
-		console.log(image);
-		if (image) {
-			if (image.length == 1) {
-				image_check = true;
-			} else {
-				console.log("no image uuid.");
-			}
+		
+		if (image.length == 1) {
+			image_check = true;
+		} else {
+			console.log("there is no image_uuid")
 		}
 
 		let results = await db_thread.getUserThreads({
@@ -233,7 +247,7 @@ app.get("/profile", async (req, res) => {
 		});
 
 		if (results) {
-			if (results.length == 1 && image_check) {
+			if (results.length >= 1 && image_check) {
 				image_uuid = image[0].image_uuid;
 
 				res.render("profile", {
