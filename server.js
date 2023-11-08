@@ -190,6 +190,10 @@ app.get("/thread/:code", async (req, res) => {
 
 	if (results) {
 		if (results[0].active == 1) {
+			await db_thread.update_view_count({
+				thread_id: results[0].thread_id,
+			});
+
 			res.render("thread", {
 				auth: req.session.authenticated,
 				results: results,

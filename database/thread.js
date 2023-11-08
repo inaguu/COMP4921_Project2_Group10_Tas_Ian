@@ -1,12 +1,12 @@
-const database = include('database_connection');
+const database = include("database_connection");
 
 async function getAllThreads(postData) {
-    let getAllThreadsSQL = `
+	let getAllThreadsSQL = `
 		SELECT *
 		FROM thread;
 	`;
 
-    try {
+	try {
 		const results = await database.query(getAllThreadsSQL);
 		console.log("Successfully got all threads");
 		console.log(results[0]);
@@ -19,21 +19,21 @@ async function getAllThreads(postData) {
 }
 
 async function getUserThreads(postData) {
-    let getUserThreadsSQL = `
+	let getUserThreadsSQL = `
         SELECT *
         FROM thread
         WHERE user_id = :user_id;
-    `
+    `;
 
-    let params = {
-        user_id: postData.user_id
-    }
+	let params = {
+		user_id: postData.user_id,
+	};
 
-    try {
+	try {
 		const results = await database.query(getUserThreadsSQL, params);
 		console.log("Successfully got user threads");
-        console.log(results[0])
-		return (results[0]);
+		console.log(results[0]);
+		return results[0];
 	} catch (err) {
 		console.log("Error getting user threads");
 		console.log(err);
@@ -42,27 +42,27 @@ async function getUserThreads(postData) {
 }
 
 async function uploadThread(postData) {
-    let uploadThreadSQL = `
+	let uploadThreadSQL = `
         INSERT INTO thread
 		(title, description, views, likes, created_date, updated_date, short_url, active, user_id)
 		VALUES
 		(:title, :description, 0, 0, :created_date, :updated_date, :short_url, 1, :user_id);
-    `
+    `;
 
-    let params = {
-        title: postData.title,
+	let params = {
+		title: postData.title,
 		description: postData.description,
-        created_date: postData.created_date,
-        updated_date: postData.updated_date,
-        short_url: postData.short_url,
-        user_id: postData.user_id
-    }
+		created_date: postData.created_date,
+		updated_date: postData.updated_date,
+		short_url: postData.short_url,
+		user_id: postData.user_id,
+	};
 
-    try {
+	try {
 		const results = await database.query(uploadThreadSQL, params);
 		console.log("Successfully inserted thread");
-        console.log(results[0])
-		return true
+		console.log(results[0]);
+		return true;
 	} catch (err) {
 		console.log("Error getting user threads");
 		console.log(err);
@@ -71,21 +71,21 @@ async function uploadThread(postData) {
 }
 
 async function getThreadRow(postData) {
-    let getThreadRowSQL = `
+	let getThreadRowSQL = `
         SELECT *
         FROM thread
         WHERE thread_id = :thread_id;
-    `
+    `;
 
-    let params = {
-        thread_id: postData.thread_id
-    }
+	let params = {
+		thread_id: postData.thread_id,
+	};
 
-    try {
+	try {
 		const results = await database.query(getThreadRowSQL, params);
 		console.log("Successfully got thread based on thread id");
-        console.log(results[0])
-		return (results[0]);
+		console.log(results[0]);
+		return results[0];
 	} catch (err) {
 		console.log("Error getting user threads");
 		console.log(err);
@@ -94,21 +94,21 @@ async function getThreadRow(postData) {
 }
 
 async function getThread(postData) {
-    let getThreadSQL = `
+	let getThreadSQL = `
         SELECT *
         FROM thread
         WHERE short_url = :short_url;
-    `
+    `;
 
-    let params = {
-        short_url: postData.short_url
-    }
+	let params = {
+		short_url: postData.short_url,
+	};
 
-    try {
+	try {
 		const results = await database.query(getThreadSQL, params);
 		console.log("Successfully got thread based on short url");
-        console.log(results[0])
-		return (results[0]);
+		console.log(results[0]);
+		return results[0];
 	} catch (err) {
 		console.log("Error getting thread");
 		console.log(err);
@@ -117,21 +117,21 @@ async function getThread(postData) {
 }
 
 async function updateThreadActive(postData) {
-    let updateThreadActiveSQL = `
+	let updateThreadActiveSQL = `
 		UPDATE thread
 		SET active = :active
 		WHERE thread_id = :thread_id;
-    `
+    `;
 
-    let params = {
+	let params = {
 		active: postData.active,
-        thread_id: postData.thread_id
-    }
+		thread_id: postData.thread_id,
+	};
 
-    try {
+	try {
 		const results = await database.query(updateThreadActiveSQL, params);
 		console.log("Successfully updated user thread acive");
-        console.log(results[0])
+		console.log(results[0]);
 		return true;
 	} catch (err) {
 		console.log("Error updating user thread active	");
@@ -141,24 +141,24 @@ async function updateThreadActive(postData) {
 }
 
 async function updateThreadInfo(postData) {
-    let updateThreadInfoSQL = `
+	let updateThreadInfoSQL = `
 		UPDATE thread
 		SET title = :title, description = :description, updated_date = :updated_date
 		WHERE thread_id = :thread_id;
-    `
+    `;
 
-    let params = {
+	let params = {
 		title: postData.title,
 		description: postData.description,
 		updated_date: postData.updated_date,
-        thread_id: postData.thread_id
-    }
+		thread_id: postData.thread_id,
+	};
 
-    try {
+	try {
 		const results = await database.query(updateThreadInfoSQL, params);
 		console.log("Successfully got user threads");
-        console.log(results[0])
-		return true
+		console.log(results[0]);
+		return true;
 	} catch (err) {
 		console.log("Error getting user threads");
 		console.log(err);
@@ -166,12 +166,36 @@ async function updateThreadInfo(postData) {
 	}
 }
 
+async function update_view_count(postData) {
+	let updateViewCountSQL = `
+	update thread
+	set views = views + 1
+	where thread_id = :thread_id;
+    `;
+
+	let params = {
+		thread_id: postData.thread_id,
+	};
+
+	try {
+		const results = await database.query(updateViewCountSQL, params);
+		console.log("Successfully updated view count.");
+		console.log(results[0]);
+		return true;
+	} catch (err) {
+		console.log("Error updating view count.");
+		console.log(err);
+		return false;
+	}
+}
+
 module.exports = {
 	getAllThreads,
-    getUserThreads,
+	getUserThreads,
 	uploadThread,
 	getThreadRow,
 	updateThreadActive,
 	getThread,
-	updateThreadInfo
+	updateThreadInfo,
+	update_view_count,
 };
