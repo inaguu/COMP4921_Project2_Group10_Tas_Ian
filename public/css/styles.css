@@ -316,3 +316,15 @@ input[type=text] {
      transition: width 0.15s ease-in-out; 
 } 
 
+/* thread */
+.thread-post {
+    border: dotted black 1px;
+    width: 75%;
+    margin-left: 12.4%;
+    padding: 10px;
+    margin-top: 13px;
+}
+
+.thread-options {
+    margin-left: 13%;
+}

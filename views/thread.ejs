@@ -5,21 +5,41 @@
 </div> -->
 
 <div class="thread-post">
-    <h1 id="post-title"><%= results[0].title %></h1>
-    <h3 id="post-info">Views: <%= results[0].views %> Comments:## Likes: ##</h3>
+    <div class="thread-info">
+        <h1 id="post-title"><%= results[0].title %></h1>
+        <h3 id="post-info">Views: <%= results[0].views %> &ensp; Comments:## &ensp; Likes: ##</h3>
+    </div>
+
+    <br>
+
+    <div class="desc-area">
+        <div name="desc" id="desc" class="desc"><%= results[0].description %></div>
+    </div>
 </div>
 
 <br>
+
+<div class="thread-options">
+    <div class="like-comment">
+        <a href="">Like</a> /
+        <a href="">Comment</a>
+    </div>
+    
+</div>
+
 
 <div class="profile-divider"></div>
 
 <br>
 
-
-<div class="desc-area">
-    <div name="desc" id="desc" class="desc"><%= results[0].description %></div>
+<div class="comment-section">
+    <div class=""></div>
 </div>
 
+
 <br>
+
+
+
 
 <%- include("templates/footer") %>
