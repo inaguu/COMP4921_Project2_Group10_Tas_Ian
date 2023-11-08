@@ -32,7 +32,7 @@
 
 <div class="comment-section" style="display: none;" id="display-textarea">
     <div class="comment-area">
-        <form action="/thread/<%= results[0].thread_id %>/comment" class="text" method="POST">
+        <form action="/thread/<%= results[0].short_url %>/<%= results[0].thread_id %>/comment" class="text" method="POST">
             <textarea name="comment_text" id="comment_text" cols="60" rows="10"></textarea>
             <button>Post</button>
         </form>

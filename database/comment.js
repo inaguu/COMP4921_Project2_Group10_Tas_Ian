@@ -16,7 +16,7 @@ async function insertComment(postData) {
 		const results = await database.query(insertCommentSQL, params);
 		console.log("Successfully added a comment.");
 		console.log(results[0]);
-		return results[0];
+		return true
 	} catch (err) {
 		console.log("Error adding a comment.");
 		console.log(err);
@@ -42,7 +42,7 @@ async function insertReply(postData) {
 		const results = await database.query(insertReplySQL, params);
 		console.log("Successfully added a reply.");
 		console.log(results[0]);
-		return results[0];
+		return true
 	} catch (err) {
 		console.log("Error adding a reply.");
 		console.log(err);

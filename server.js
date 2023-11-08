@@ -13,6 +13,7 @@ const db_tables = include("database/create_table");
 const db_users = include("database/users");
 const db_image = include("database/image");
 const db_thread = include("database/thread");
+const db_comment = include("database/comment")
 const url = include("public/js/url");
 const success = db_utils.printMySQLVersion();
 
@@ -251,20 +252,32 @@ app.get("/thread/:short_url/like", async (req, res) => {
 // work on thread_upload css
 
 // thread_id becuase it is the main thread and the parent_id will be null
-app.post("/thread/:thread_id/comment", async (req, res) => {
+app.post("/thread/:short_url/:thread_id/comment", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/signup")
 	} else {
 		let user_id = req.session.user_id
 		let thread_id = req.params.thread_id
-		let description = req.body.comment_text
+		let comment_text = req.body.comment_text
+
+		let results = await db_comment.insertComment({
+			thread_id: thread_id,
+			user_id: user_id,
+			comment: comment_text
+		})
+
+		if (results) {
+			res.redirect("/thread/" + req.params.short_url)
+		}
+
+		
 	}
 })
 
 // each comment will have a button to add comments and that post ->
 // will be the comment_id when we fill the thread page with comments
 // parent_id will be the comment_id
-app.post("/thread/:thread_id/:comment_id/comment", (req, res) => {
+app.post("/thread/:short_url/:thread_id/:comment_id/comment", (req, res) => {
 
 })
 
