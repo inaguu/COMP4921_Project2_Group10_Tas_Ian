@@ -1,26 +1,26 @@
 <tr>
     <td><%= number + 1 %></td>
+    <td><%= results.title %></td>
+    <td class="content"><%= results.description %></td>
 
-    <% if (data.active == 1) { %>
-        <td class="URL"><a href="<%= data.long_url %>"><%= data.long_url %></a></td>
-        <td><a href="<%= '/' + data.short_url %>"><%= base_url + '/' + data.short_url %></a></td>
+    <% if (results.active == 1) { %>
+        <td><a href="<%= '/thread/' + results.short_url %>"><%= base_url +"/thread/"+ results.short_url %></a></td>
     <% } else { %>
-        <td class="URL"><%= data.long_url %></td>
-        <td><%= data.short_url %></td>
+        <td><%= results.short_url %></td>
     <% } %>
 
-    <td><%= data.hits %></td>
+    <td><%= results.views %></td>
+    <td><%= results.likes %></td>
+    <td><%= results.created_date %></td>
+    <td><%= results.updated_date %></td>
 
-    <% if (data.active == 1) { %>
-        <form action="/profile/update/active/<%= data.uploads_id %>" method="post">
+    <% if (results.active == 1) { %>
+        <form action="/profile/update/thread/active/<%= results.thread_id %>" method="post">
             <td> <input type="checkbox" name="checkbox" onchange="this.form.submit()" checked> </td>
         </form>
     <% } else { %>
-        <form action="/profile/update/active/<%= data.uploads_id %>" method="post">
+        <form action="/profile/update/thread/active/<%= results.thread_id %>" method="post">
             <td> <input type="checkbox" name="checkbox" onchange="this.form.submit()"> </td>
         </form>
     <% } %>
-
-    <td><%= data.createdDate %></td>
-    <td><%= data.lastHitDate %></td>
 </tr>

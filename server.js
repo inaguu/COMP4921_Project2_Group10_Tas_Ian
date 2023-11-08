@@ -13,9 +13,10 @@ const db_tables = include("database/create_table");
 const db_users = include("database/users");
 const db_image = include("database/image");
 const db_thread = include("database/thread")
-// const db_uploads = include("database/uploads");
+const url = include("public/js/url")
 const success = db_utils.printMySQLVersion();
 
+const base_url = "http://localhost:8080"; 
 const port = process.env.PORT || 8080;
 
 const app = express();
@@ -175,12 +176,15 @@ app.get("/home", async (req, res) => {
 
 	res.render("home", {
 		auth: req.session.authenticated,
-		results: results
+		results: results,
+		base_url: base_url
 	});
 });
 
 app.get("/thread/:code", (req, res) => {
-	res.render("thread")
+	res.render("thread", {
+		auth: req.session.authenticated,
+	})
 })
 
 //requires session auth
@@ -195,33 +199,37 @@ app.get("/profile", async (req, res) => {
 			user_id: user_id,
 		});
 
-		req.session.image_uuid = image[0].image_uuid
+		let results = await db_thread.getUserThreads({
+			user_id: user_id
+		})
 
-		// let results = await db_thread.getUserThreads({
-		// 	user_id: user_id
-		// })
-
-		if (image) {
-			if (image.length == 1) {
+		if (results) {
+			if (results.length == 1) {
 				image_uuid = image[0].image_uuid;
 
 				res.render("profile", {
 					username: username,
 					image_uuid: image_uuid,
 					auth: req.session.authenticated,
-					// results: results
+					results: results,
+					base_url: base_url
 				});
 			} else {
 				res.render("profile", {
 					username,
 					image_uuid: false,
 					auth: req.session.authenticated,
-					// results: results
+					results: results,
+					base_url: base_url
 				});
 			}
 		}
 	}
 });
+
+app.get("/profile/thread/:code", (req, res) => {
+
+})
 
 //requires session auth
 app.get("/profile/upload", (req, res) => {
@@ -234,28 +242,38 @@ app.get("/profile/upload", (req, res) => {
 	}
 });
 
-app.post("/profile/upload/thread", (req, res) => {
+app.post("/profile/upload/thread", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
 		let user_id = req.session.user_id
 		let title = req.body.thread_title
 		let desc = req.body.thread_desc
-		let curr_date = new Date().toDateString();
-		
-		// var results = await db_uploads.threadUpload({
-		// 	title: title,
-		// 	description: desc,
-		// 	created_date: curr_date,
-		// 	edit_date: curr_date,
-		// 	user_id: user_id
-		// })
+		let short_url = url.url_code()
 
-		// if (results) {
+		const date = new Date();
+
+		let day = date.getDate();
+		let month = date.getMonth() + 1;
+		let year = date.getFullYear();
+
+		let curr_date = `${day}-${month}-${year}`;
+		console.log(curr_date); // "07-11-2023"
+		
+		var results = await db_thread.uploadThread({
+			title: title,
+			description: desc,
+			created_date: curr_date,
+			updated_date: curr_date,
+			short_url: short_url,
+			user_id: user_id
+		})
+
+		if (results) {
 		 	res.redirect("/profile")
-		// } else {
-		// 	console.log(results)
-		// }
+		} else {
+			console.log(results)
+		}
 	}
 })
 
@@ -289,20 +307,22 @@ app.post("/profile/update/thread/active/:thread_id", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
-		let data = await db_uploads.getUploadRow({
-			uploads_id: req.params.uploads_id,
+		let data = await db_thread.getThreadRow({
+			thread_id: req.params.thread_id,
 		});
 
 		if (data[0].active == 1) {
-			await db_uploads.updateActive({
+			console.log("active to inactive")
+			await db_thread.updateThreadActive({
 				active: 0,
-				uploads_id: req.params.uploads_id,
+				thread_id: req.params.thread_id,
 			});
 			res.redirect("/profile");
 		} else {
-			await db_uploads.updateActive({
+			console.log("inactive to active")
+			await db_thread.updateThreadActive({
 				active: 1,
-				uploads_id: req.params.uploads_id,
+				thread_id: req.params.thread_id,
 			});
 			res.redirect("/profile");
 		}

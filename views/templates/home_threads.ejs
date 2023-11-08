@@ -4,7 +4,7 @@
     <td class="content"><%= results.description %></td>
 
     <% if (results.active == 1) { %>
-        <td><a href="<%= '/thread/' + results.short_url %>"><%= results.short_url %></a></td>
+        <td><a href="<%= '/thread/' + results.short_url %>"><%= base_url +"/thread/"+ results.short_url %></a></td>
     <% } else { %>
         <td><%= results.short_url %></td>
     <% } %>
