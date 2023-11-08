@@ -54,7 +54,7 @@ async function getParentComments(postData) {
 	let getParentCommentsSQL = `
 		SELECT comment_id
 		FROM comment
-        WHERE thread_id = :thread_id;
+        WHERE thread_id = :thread_id AND parent_id is null;
 	`;
 
 	let params = {
@@ -76,11 +76,11 @@ async function getParentComments(postData) {
 async function getChildComments(postData) {
 	let getChildCommentsSQL = `
 		with recursive comment_hierarchy as 
-			(select comment_id, parent_id, comment
+			(select comment_id, thread_id, user_id, parent_id, comment
 			from comment
 			where comment_id = :comment_id
 			union
-			(select C.comment_id, C.parent_id, C.comment
+			(select C.comment_id, C.thread_id, C.user_id, C.parent_id, C.comment
 			from comment C
 			join comment_hierarchy H on H.comment_id = C.parent_id)
 			)

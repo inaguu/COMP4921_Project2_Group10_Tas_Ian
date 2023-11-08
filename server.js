@@ -13,6 +13,7 @@ const db_tables = include("database/create_table");
 const db_users = include("database/users");
 const db_image = include("database/image");
 const db_thread = include("database/thread");
+const db_comment = include("database/comment");
 const url = include("public/js/url");
 const success = db_utils.printMySQLVersion();
 
@@ -183,20 +184,20 @@ app.get("/home", async (req, res) => {
 });
 
 app.post("/home/search", async (req, res) => {
-	let search = req.body.search
+	let search = req.body.search;
 
-	console.log(search)
+	console.log(search);
 
 	let results = await db_thread.getThreadTitleSearch({
-		search: search
-	})
+		search: search,
+	});
 
 	res.render("home", {
 		auth: req.session.authenticated,
 		results: results,
 		base_url: base_url,
-	})
-})
+	});
+});
 
 app.get("/thread/:code", async (req, res) => {
 	let results = await db_thread.getThread({
@@ -209,13 +210,34 @@ app.get("/thread/:code", async (req, res) => {
 			await db_thread.update_view_count({
 				thread_id: results[0].thread_id,
 			});
+			let all_comments = [];
 
-			// get the comments and send to thread
+			// TODO get the comments and send to thread
 			// gonna be a long? template for comments
+
+			let parent_comments = await db_comment.getParentComments({
+				thread_id: results[0].thread_id,
+			});
+
+			console.log("parent comment id: " + JSON.stringify(parent_comments));
+
+			for (let i = 0; i < parent_comments.length; i++) {
+				let success = await db_comment.getChildComments({
+					comment_id: parent_comments[i].comment_id,
+				});
+				console.log(
+					"Each parent and child comments: " + JSON.stringify(success)
+				);
+				all_comments.push(success);
+			}
+			console.log(
+				"all_comments from final array: " + JSON.stringify(all_comments)
+			);
 
 			res.render("thread", {
 				auth: req.session.authenticated,
 				results: results,
+				comments: all_comments,
 			});
 		} else {
 			// a page to tell the user this thread is inactive
@@ -231,10 +253,9 @@ app.get("/thread/:code", async (req, res) => {
 });
 
 app.get("/thread/:short_url/like", async (req, res) => {
-
 	await db_thread.updateLikeCount({
-		short_url: req.params.short_url
-	})
+		short_url: req.params.short_url,
+	});
 
 	let results = await db_thread.getThread({
 		short_url: req.params.short_url,
@@ -244,29 +265,27 @@ app.get("/thread/:short_url/like", async (req, res) => {
 		res.render("thread", {
 			auth: req.session.authenticated,
 			results: results,
-		})
+		});
 	}
-})
+});
 
 // work on thread_upload css
 
 // thread_id becuase it is the main thread and the parent_id will be null
 app.post("/thread/:thread_id/comment", async (req, res) => {
 	if (!isValidSession(req)) {
-		res.redirect("/signup")
+		res.redirect("/signup");
 	} else {
-		let user_id = req.session.user_id
-		let thread_id = req.params.thread_id
-		let description = req.body.comment_text
+		let user_id = req.session.user_id;
+		let thread_id = req.params.thread_id;
+		let description = req.body.comment_text;
 	}
-})
+});
 
 // each comment will have a button to add comments and that post ->
 // will be the comment_id when we fill the thread page with comments
 // parent_id will be the comment_id
-app.post("/thread/:thread_id/:comment_id/comment", (req, res) => {
-
-})
+app.post("/thread/:thread_id/:comment_id/comment", (req, res) => {});
 
 //requires session auth
 app.get("/profile", async (req, res) => {
@@ -280,11 +299,11 @@ app.get("/profile", async (req, res) => {
 		let image = await db_image.getPFP({
 			user_id: user_id,
 		});
-		
+
 		if (image.length == 1) {
 			image_check = true;
 		} else {
-			console.log("there is no image_uuid")
+			console.log("there is no image_uuid");
 		}
 
 		let results = await db_thread.getUserThreads({
