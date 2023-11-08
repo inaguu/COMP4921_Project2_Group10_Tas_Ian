@@ -140,7 +140,31 @@ async function updateThreadActive(postData) {
 	}
 }
 
+async function updateThreadInfo(postData) {
+    let updateThreadInfoSQL = `
+		UPDATE thread
+		SET title = :title, description = :description, updated_date = :updated_date
+		WHERE thread_id = :thread_id;
+    `
 
+    let params = {
+		title: postData.title,
+		description: postData.description,
+		updated_date: postData.updated_date,
+        thread_id: postData.thread_id
+    }
+
+    try {
+		const results = await database.query(updateThreadInfoSQL, params);
+		console.log("Successfully got user threads");
+        console.log(results[0])
+		return true
+	} catch (err) {
+		console.log("Error getting user threads");
+		console.log(err);
+		return false;
+	}
+}
 
 module.exports = {
 	getAllThreads,
@@ -148,5 +172,6 @@ module.exports = {
 	uploadThread,
 	getThreadRow,
 	updateThreadActive,
-	getThread
+	getThread,
+	updateThreadInfo
 };

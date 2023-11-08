@@ -294,7 +294,7 @@ app.post("/profile/upload/thread", async (req, res) => {
 		let year = date.getFullYear();
 
 		let curr_date = `${day}-${month}-${year}`;
-		console.log(curr_date); // "07-11-2023"
+		// console.log(curr_date); // "07-11-2023"
 		
 		var results = await db_thread.uploadThread({
 			title: title,
@@ -318,23 +318,30 @@ app.post("/profile/update/thread/:thread_id", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
-		let data = await db_uploads.getUploadRow({
-			uploads_id: req.params.uploads_id,
-		});
+		let title = req.body.thread_title
+		let desc = req.body.thread_desc
 
-		if (data[0].active == 1) {
-			await db_uploads.updateActive({
-				active: 0,
-				uploads_id: req.params.uploads_id,
-			});
-			res.redirect("/profile");
-		} else {
-			await db_uploads.updateActive({
-				active: 1,
-				uploads_id: req.params.uploads_id,
-			});
-			res.redirect("/profile");
-		}
+		const date = new Date();
+
+		let day = date.getDate();
+		let month = date.getMonth() + 1;
+		let year = date.getFullYear();
+
+		let curr_date = `${day}-${month}-${year}`;
+		// console.log(curr_date); // "07-11-2023"
+
+		let results = await db_thread.updateThreadInfo({
+			title: title,
+			description: desc,
+			updated_date: curr_date,
+			thread_id: req.params.thread_id
+		})
+
+		if (results) {
+			res.redirect("/profile")
+	   } else {
+		   console.log(results)
+	   }
 	}
 });
 
