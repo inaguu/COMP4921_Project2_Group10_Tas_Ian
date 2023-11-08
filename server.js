@@ -181,10 +181,25 @@ app.get("/home", async (req, res) => {
 	});
 });
 
-app.get("/thread/:code", (req, res) => {
-	res.render("thread", {
-		auth: req.session.authenticated,
+app.get("/thread/:code", async (req, res) => {
+
+	let results = await db_thread.getThread({
+		short_url: req.params.code
 	})
+
+	if (results) {
+		if (results[0].active == 1) {
+			res.render("thread", {
+				auth: req.session.authenticated,
+				results: results
+			})
+		} else {
+			// a page to tell the user this thread is inactive
+			console.log("thread is inactive")
+		}
+	} else {
+		res.redirect("*")
+	}
 })
 
 //requires session auth
@@ -227,8 +242,27 @@ app.get("/profile", async (req, res) => {
 	}
 });
 
-app.get("/profile/thread/:code", (req, res) => {
+app.get("/profile/thread/:short_url", async (req, res) => {
+	if (!isValidSession(req)) {
+		res.redirect("/");
+	} else {
 
+		let results = await db_thread.getThread({
+			short_url: req.params.short_url,
+		});		
+
+		if (results) {
+			res.render("thread_edit", {
+				auth: req.session.authenticated,
+				results: results
+			});
+		} else {
+			console.log("results is empty")
+			res.redirect("*")
+		}
+
+		
+	}
 })
 
 //requires session auth

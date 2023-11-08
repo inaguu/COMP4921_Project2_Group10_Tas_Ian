@@ -60,7 +60,7 @@ async function uploadThread(postData) {
 
     try {
 		const results = await database.query(uploadThreadSQL, params);
-		console.log("Successfully got user threads");
+		console.log("Successfully inserted thread");
         console.log(results[0])
 		return true
 	} catch (err) {
@@ -83,11 +83,34 @@ async function getThreadRow(postData) {
 
     try {
 		const results = await database.query(getThreadRowSQL, params);
-		console.log("Successfully got user threads");
+		console.log("Successfully got thread based on thread id");
         console.log(results[0])
 		return (results[0]);
 	} catch (err) {
 		console.log("Error getting user threads");
+		console.log(err);
+		return false;
+	}
+}
+
+async function getThread(postData) {
+    let getThreadSQL = `
+        SELECT *
+        FROM thread
+        WHERE short_url = :short_url;
+    `
+
+    let params = {
+        short_url: postData.short_url
+    }
+
+    try {
+		const results = await database.query(getThreadSQL, params);
+		console.log("Successfully got thread based on short url");
+        console.log(results[0])
+		return (results[0]);
+	} catch (err) {
+		console.log("Error getting thread");
 		console.log(err);
 		return false;
 	}
@@ -124,5 +147,6 @@ module.exports = {
     getUserThreads,
 	uploadThread,
 	getThreadRow,
-	updateThreadActive
+	updateThreadActive,
+	getThread
 };

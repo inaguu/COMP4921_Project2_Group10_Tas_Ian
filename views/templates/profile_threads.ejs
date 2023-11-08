@@ -9,6 +9,12 @@
         <td><%= results.short_url %></td>
     <% } %>
 
+    <td>
+        <form action="/profile/thread/<%= results.short_url %>" method="GET">
+            <button>Edit</button>
+        </form>
+    </td>
+
     <td><%= results.views %></td>
     <td><%= results.likes %></td>
     <td><%= results.created_date %></td>

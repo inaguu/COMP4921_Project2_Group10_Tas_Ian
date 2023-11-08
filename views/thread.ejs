@@ -1,15 +1,21 @@
 <%- include("templates/header") %>
 
 <div class="home-title">
-    <h1><%= title %></h1>
+    <h1>Thread</h1>
 </div>
+
+<br>
 
 <div class="profile-divider"></div>
 
 <br>
 
+<h3><%= results[0].title %></h3>
+
 <div class="desc-area">
-    <div name="desc" id="desc" class="desc"><%= desc %></div>
+    <div name="desc" id="desc" class="desc"><%= results[0].description %></div>
 </div>
+
+<br>
 
 <%- include("templates/footer") %>
