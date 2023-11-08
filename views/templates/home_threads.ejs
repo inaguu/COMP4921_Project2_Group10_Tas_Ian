@@ -1,16 +1,18 @@
 <tr>
-    <td><%= number + 1 %></td>
-    <td><%= results.title %></td>
-    <td class="content"><%= results.description %></td>
-
     <% if (results.active == 1) { %>
-        <td><a href="<%= '/thread/' + results.short_url %>"><%= base_url +"/thread/"+ results.short_url %></a></td>
-    <% } else { %>
-        <td><%= results.short_url %></td>
-    <% } %>
+        <td><%= number + 1 %></td>
+        <td><%= results.title %></td>
+        <td class="content"><%= results.description %></td>
 
-    <td><%= results.views %></td>
-    <td><%= results.likes %></td>
-    <td><%= results.created_date %></td>
-    <td><%= results.updated_date %></td>
+        <% if (results.active == 1) { %>
+            <td><a href="<%= '/thread/' + results.short_url %>"><%= base_url +"/thread/"+ results.short_url %></a></td>
+        <% } else { %>
+            <td><%= results.short_url %></td>
+        <% } %>
+
+        <td><%= results.views %></td>
+        <td><%= results.likes %></td>
+        <td><%= results.created_date %></td>
+        <td><%= results.updated_date %></td>
+    <% } %>
 </tr>
