@@ -12,11 +12,11 @@ const db_utils = include("database/db_utils");
 const db_tables = include("database/create_table");
 const db_users = include("database/users");
 const db_image = include("database/image");
-const db_thread = include("database/thread")
-const url = include("public/js/url")
+const db_thread = include("database/thread");
+const url = include("public/js/url");
 const success = db_utils.printMySQLVersion();
 
-const base_url = "http://localhost:8080"; 
+const base_url = "http://localhost:8080";
 const port = process.env.PORT || 8080;
 
 const app = express();
@@ -173,36 +173,39 @@ app.post("/logout", (req, res) => {
 
 //does not require session auth - public
 app.get("/home", async (req, res) => {
-
-	let results = await db_thread.getAllThreads()
+	let results = await db_thread.getAllThreads();
 
 	res.render("home", {
 		auth: req.session.authenticated,
 		results: results,
-		base_url: base_url
+		base_url: base_url,
 	});
 });
 
 app.get("/thread/:code", async (req, res) => {
-
 	let results = await db_thread.getThread({
-		short_url: req.params.code
-	})
+		short_url: req.params.code,
+	});
+	console.log(results);
 
 	if (results) {
 		if (results[0].active == 1) {
 			res.render("thread", {
 				auth: req.session.authenticated,
-				results: results
-			})
+				results: results,
+			});
 		} else {
 			// a page to tell the user this thread is inactive
-			console.log("thread is inactive")
+			console.log("thread is inactive");
+			res.render("inactive", {
+				auth: req.session.authenticated,
+				title: results[0].title,
+			});
 		}
 	} else {
-		res.redirect("*")
+		res.redirect("*");
 	}
-})
+});
 
 //requires session auth
 app.get("/profile", async (req, res) => {
@@ -211,17 +214,26 @@ app.get("/profile", async (req, res) => {
 	} else {
 		username = req.session.username;
 		user_id = req.session.user_id;
+		let image_check = false;
 
 		let image = await db_image.getPFP({
 			user_id: user_id,
 		});
+		console.log(image);
+		if (image) {
+			if (image.length == 1) {
+				image_check = true;
+			} else {
+				console.log("no image uuid.");
+			}
+		}
 
 		let results = await db_thread.getUserThreads({
-			user_id: user_id
-		})
+			user_id: user_id,
+		});
 
 		if (results) {
-			if (results.length == 1) {
+			if (results.length == 1 && image_check) {
 				image_uuid = image[0].image_uuid;
 
 				res.render("profile", {
@@ -229,7 +241,7 @@ app.get("/profile", async (req, res) => {
 					image_uuid: image_uuid,
 					auth: req.session.authenticated,
 					results: results,
-					base_url: base_url
+					base_url: base_url,
 				});
 			} else {
 				res.render("profile", {
@@ -237,7 +249,7 @@ app.get("/profile", async (req, res) => {
 					image_uuid: false,
 					auth: req.session.authenticated,
 					results: results,
-					base_url: base_url
+					base_url: base_url,
 				});
 			}
 		}
@@ -248,24 +260,21 @@ app.get("/profile/thread/:short_url", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
-
 		let results = await db_thread.getThread({
 			short_url: req.params.short_url,
-		});		
+		});
 
 		if (results) {
 			res.render("thread_edit", {
 				auth: req.session.authenticated,
-				results: results
+				results: results,
 			});
 		} else {
-			console.log("results is empty")
-			res.redirect("*")
+			console.log("results is empty");
+			res.redirect("*");
 		}
-
-		
 	}
-})
+});
 
 //requires session auth
 app.get("/profile/upload", (req, res) => {
@@ -282,10 +291,10 @@ app.post("/profile/upload/thread", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
-		let user_id = req.session.user_id
-		let title = req.body.thread_title
-		let desc = req.body.thread_desc
-		let short_url = url.url_code()
+		let user_id = req.session.user_id;
+		let title = req.body.thread_title;
+		let desc = req.body.thread_desc;
+		let short_url = url.url_code();
 
 		const date = new Date();
 
@@ -295,31 +304,31 @@ app.post("/profile/upload/thread", async (req, res) => {
 
 		let curr_date = `${day}-${month}-${year}`;
 		// console.log(curr_date); // "07-11-2023"
-		
+
 		var results = await db_thread.uploadThread({
 			title: title,
 			description: desc,
 			created_date: curr_date,
 			updated_date: curr_date,
 			short_url: short_url,
-			user_id: user_id
-		})
+			user_id: user_id,
+		});
 
 		if (results) {
-		 	res.redirect("/profile")
+			res.redirect("/profile");
 		} else {
-			console.log(results)
+			console.log(results);
 		}
 	}
-})
+});
 
 // used for updating a thread
 app.post("/profile/update/thread/:thread_id", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/");
 	} else {
-		let title = req.body.thread_title
-		let desc = req.body.thread_desc
+		let title = req.body.thread_title;
+		let desc = req.body.thread_desc;
 
 		const date = new Date();
 
@@ -334,14 +343,14 @@ app.post("/profile/update/thread/:thread_id", async (req, res) => {
 			title: title,
 			description: desc,
 			updated_date: curr_date,
-			thread_id: req.params.thread_id
-		})
+			thread_id: req.params.thread_id,
+		});
 
 		if (results) {
-			res.redirect("/profile")
-	   } else {
-		   console.log(results)
-	   }
+			res.redirect("/profile");
+		} else {
+			console.log(results);
+		}
 	}
 });
 
@@ -355,14 +364,14 @@ app.post("/profile/update/thread/active/:thread_id", async (req, res) => {
 		});
 
 		if (data[0].active == 1) {
-			console.log("active to inactive")
+			console.log("active to inactive");
 			await db_thread.updateThreadActive({
 				active: 0,
 				thread_id: req.params.thread_id,
 			});
 			res.redirect("/profile");
 		} else {
-			console.log("inactive to active")
+			console.log("inactive to active");
 			await db_thread.updateThreadActive({
 				active: 1,
 				thread_id: req.params.thread_id,
