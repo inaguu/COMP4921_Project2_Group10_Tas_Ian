@@ -12,6 +12,7 @@ const db_utils = include("database/db_utils");
 const db_tables = include("database/create_table");
 const db_users = include("database/users");
 const db_image = include("database/image");
+const db_thread = include("database/thread")
 // const db_uploads = include("database/uploads");
 const success = db_utils.printMySQLVersion();
 
@@ -170,11 +171,11 @@ app.post("/logout", (req, res) => {
 //does not require session auth - public
 app.get("/home", async (req, res) => {
 
-	// let results = await db_thread.getAllThreads()
+	let results = await db_thread.getAllThreads()
 
 	res.render("home", {
 		auth: req.session.authenticated,
-		// results: results
+		results: results
 	});
 });
 
