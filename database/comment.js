@@ -1,5 +1,55 @@
 const database = include("database_connection");
 
+async function insertComment(postData) {
+	let insertCommentSQL = `
+	INSERT INTO comment (thread_id, user_id, comment) 
+	VALUES (:thread_id, :user_id, :comment);
+	`;
+
+	let params = {
+		thread_id: postData.thread_id,
+		user_id: postData.user_id,
+		comment: postData.comment,
+	};
+
+	try {
+		const results = await database.query(insertCommentSQL, params);
+		console.log("Successfully added a comment.");
+		console.log(results[0]);
+		return results[0];
+	} catch (err) {
+		console.log("Error adding a comment.");
+		console.log(err);
+		return false;
+	}
+}
+
+async function insertReply(postData) {
+	let insertReplySQL = `
+	INSERT INTO comment (thread_id, user_id, parent_id, comment) 
+	VALUES (:thread_id, :user_id, :parent_id, :comment);
+
+	`;
+
+	let params = {
+		thread_id: postData.thread_id,
+		user_id: postData.user_id,
+		parent_id: postData.parent_id,
+		comment: postData.comment,
+	};
+
+	try {
+		const results = await database.query(insertReplySQL, params);
+		console.log("Successfully added a reply.");
+		console.log(results[0]);
+		return results[0];
+	} catch (err) {
+		console.log("Error adding a reply.");
+		console.log(err);
+		return false;
+	}
+}
+
 async function getParentComments(postData) {
 	let getParentCommentsSQL = `
 		SELECT comment_id
