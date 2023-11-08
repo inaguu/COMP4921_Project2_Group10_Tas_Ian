@@ -1,7 +1,12 @@
 <%- include("templates/header") %>
 
-<div class="home-title">
+<!-- <div class="home-title">
     <h1>Thread</h1>
+</div> -->
+
+<div class="thread-post">
+    <h1 id="post-title"><%= results[0].title %></h1>
+    <h3 id="post-info">Views: <%= results[0].views %> Comments:## Likes: ##</h3>
 </div>
 
 <br>
@@ -10,7 +15,6 @@
 
 <br>
 
-<h3><%= results[0].title %></h3>
 
 <div class="desc-area">
     <div name="desc" id="desc" class="desc"><%= results[0].description %></div>
