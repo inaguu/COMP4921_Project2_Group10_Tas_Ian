@@ -126,9 +126,11 @@ app.post("/loggingin", async (req, res) => {
 	var email = req.body.email;
 	var password = req.body.password;
 
+	console.log(email);
+	console.log(password);
+
 	var results = await db_users.getUser({
 		email: email,
-		hashedPassword: password,
 	});
 
 	if (results) {
@@ -154,13 +156,13 @@ app.post("/loggingin", async (req, res) => {
 			});
 			return;
 		}
+	} else {
+		console.log("user not found");
+		//user and password combination not found
+		res.render("landing_login", {
+			error: "User and password not found.",
+		});
 	}
-
-	console.log("user not found");
-	//user and password combination not found
-	res.render("landing_login", {
-		error: "User and password not found.",
-	});
 });
 
 app.post("/logout", (req, res) => {
