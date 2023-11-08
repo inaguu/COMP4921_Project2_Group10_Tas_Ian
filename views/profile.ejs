@@ -1,4 +1,5 @@
 <%- include("templates/header") %>
+
 <script type="text/javascript"> 
     $.cloudinary.config({ cloud_name: '<%= process.env.CLOUDINARY_CLOUD_NAME %>', secure: true});
 </script>
@@ -6,13 +7,15 @@
 <div class="user-info">
     <% if (image_uuid) { %>
         <div class="image">
-            <script type="text/javascript">document.write($.cloudinary.imageTag('<%- image_uuid %>', {height: 100, width: 100, crop: "fit"}).toHtml());</script>
+            <a href="/profile/upload/image"><script type="text/javascript">document.write($.cloudinary.imageTag('<%- image_uuid %>', {height: 100, width: 100, crop: "fit"}).toHtml());</script></a>
         </div>
+    <% } else { %>
+        <form action="/profile/upload/image" method="get">
+            <button style="margin-bottom: 7px;">Upload PFP</button>
+        </form>
     <% } %>
     <h1><%= username %></h1>
-    <form action="/profile/upload/image" method="get">
-        <button style="margin-bottom: 7px;">PFP</button>
-    </form>
+    
 </div>
 
 <div class="option-btns">
@@ -27,6 +30,26 @@
 
 <br>
 
-
+<div class="home-table">
+    <div class="table-info">
+        <table>
+            <tr>
+                <th class="number">#</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>URL</th>
+                <th>Views</th>
+                <th>Likes</th>
+                <th>Created</th>
+                <th>Updated</th>
+                <th>Active</th>
+            </tr>
+            <% let i=0 %>
+            <% for (i = 0; i < results.length; i++) { %>
+                <%- include('templates/profile_threads', {results: results[i], number: i, base_url: base_url})  %> 
+            <% } %>
+        </table>
+    </div>
+</div>
 
 <%- include("templates/footer") %>

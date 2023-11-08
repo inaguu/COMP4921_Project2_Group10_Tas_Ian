@@ -219,7 +219,7 @@ nav button:hover::before  {
   color: #252422;
 }
 
-.URL {
+.content {
     max-width: 450px;
     text-overflow: ellipsis;
     overflow: hidden;

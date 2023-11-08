@@ -9,5 +9,25 @@
 
 <br>
 
+<div class="home-table">
+    <div class="table-info">
+        <table>
+            <tr>
+                <th class="number">#</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>URL</th>
+                <th>Views</th>
+                <th>Likes</th>
+                <th>Created</th>
+                <th>Updated</th>
+            </tr>
+            <% let i=0 %>
+            <% for (i = 0; i < results.length; i++) { %>
+                <%- include('templates/home_threads', {results: results[i], number: i, base_url: base_url})  %> 
+            <% } %>
+        </table>
+    </div>
+</div>
 
 <%- include("templates/footer") %>
