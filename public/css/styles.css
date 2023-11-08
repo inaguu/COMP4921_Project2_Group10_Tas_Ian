@@ -328,3 +328,8 @@ input[type=text] {
 .thread-options {
     margin-left: 13%;
 }
+
+.text {
+    margin-left: 12%;
+    padding: 10px;
+}

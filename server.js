@@ -202,13 +202,16 @@ app.get("/thread/:code", async (req, res) => {
 	let results = await db_thread.getThread({
 		short_url: req.params.code,
 	});
-	console.log(results);
+	// console.log(results);
 
 	if (results) {
 		if (results[0].active == 1) {
 			await db_thread.update_view_count({
 				thread_id: results[0].thread_id,
 			});
+
+			// get the comments and send to thread
+			// gonna be a long? template for comments
 
 			res.render("thread", {
 				auth: req.session.authenticated,
@@ -226,6 +229,44 @@ app.get("/thread/:code", async (req, res) => {
 		res.redirect("*");
 	}
 });
+
+app.get("/thread/:short_url/like", async (req, res) => {
+
+	await db_thread.updateLikeCount({
+		short_url: req.params.short_url
+	})
+
+	let results = await db_thread.getThread({
+		short_url: req.params.short_url,
+	});
+
+	if (results) {
+		res.render("thread", {
+			auth: req.session.authenticated,
+			results: results,
+		})
+	}
+})
+
+// work on thread_upload css
+
+// thread_id becuase it is the main thread and the parent_id will be null
+app.post("/thread/:thread_id/comment", async (req, res) => {
+	if (!isValidSession(req)) {
+		res.redirect("/signup")
+	} else {
+		let user_id = req.session.user_id
+		let thread_id = req.params.thread_id
+		let description = req.body.comment_text
+	}
+})
+
+// each comment will have a button to add comments and that post ->
+// will be the comment_id when we fill the thread page with comments
+// parent_id will be the comment_id
+app.post("/thread/:thread_id/:comment_id/comment", (req, res) => {
+
+})
 
 //requires session auth
 app.get("/profile", async (req, res) => {

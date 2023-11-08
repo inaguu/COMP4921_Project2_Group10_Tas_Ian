@@ -211,6 +211,29 @@ async function update_view_count(postData) {
 	}
 }
 
+async function updateLikeCount(postData) {
+	let updateLikeCountSQL = `
+	update thread
+	set likes = likes + 1
+	where short_url = :short_url;
+    `;
+
+	let params = {
+		short_url: postData.short_url,
+	};
+
+	try {
+		const results = await database.query(updateLikeCountSQL, params);
+		console.log("Successfully updated like count.");
+		console.log(results[0]);
+		return true;
+	} catch (err) {
+		console.log("Error updating like count.");
+		console.log(err);
+		return false;
+	}
+}
+
 module.exports = {
 	getAllThreads,
 	getUserThreads,
@@ -221,4 +244,5 @@ module.exports = {
 	updateThreadInfo,
 	getThreadTitleSearch,
 	update_view_count,
+	updateLikeCount,
 };
