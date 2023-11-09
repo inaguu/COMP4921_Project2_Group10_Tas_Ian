@@ -236,11 +236,16 @@ app.get("/thread/:code", async (req, res) => {
 
 			console.log(all_comments);
 
+			let count = await db_comment.countComments({
+				thread_id: results[0].thread_id,
+			});
+
 			res.render("thread", {
 				auth: req.session.authenticated,
 				results: results,
 				comments: all_comments,
-				username: req.session.username
+				username: req.session.username,
+				count: count,
 			});
 		} else {
 			// a page to tell the user this thread is inactive
