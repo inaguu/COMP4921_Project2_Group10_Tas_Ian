@@ -14,7 +14,7 @@
             <script type="text/javascript">document.write($.cloudinary.imageTag('<%= results[0].image_uuid %>', {height: 100, width: 100, crop: "fit"}).toHtml());</script>
         </div>
         <p class="thread-author">
-            <h2><%= username %></h2>
+            <h2><%= results[0].username %></h2>
         </p>
     </div>
 

@@ -244,7 +244,6 @@ app.get("/thread/:code", async (req, res) => {
 				auth: req.session.authenticated,
 				results: results,
 				comments: all_comments,
-				username: req.session.username,
 				count: count,
 			});
 		} else {
