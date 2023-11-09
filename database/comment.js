@@ -175,6 +175,8 @@ async function editComment(postData) {
 }
 
 module.exports = {
+	insertComment,
+	insertReply,
 	getParentComments,
 	getChildComments,
 	deleteOwnComment,
