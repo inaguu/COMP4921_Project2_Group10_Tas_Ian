@@ -1,10 +1,23 @@
 <%- include("templates/header") %>
 
+<script type="text/javascript"> 
+    $.cloudinary.config({ cloud_name: '<%= process.env.CLOUDINARY_CLOUD_NAME %>', secure: true});
+</script>
+
 <!-- <div class="home-title">
     <h1>Thread</h1>
 </div> -->
 
 <div class="thread-post">
+    <div class="thread-user">
+        <div class="image">
+            <script type="text/javascript">document.write($.cloudinary.imageTag('<%= results[0].image_uuid %>', {height: 100, width: 100, crop: "fit"}).toHtml());</script>
+        </div>
+        <p class="thread-author">
+            <h2><%= username %></h2>
+        </p>
+    </div>
+
     <div class="thread-info">
         <h1 id="post-title"><%= results[0].title %></h1>
         <h3 id="post-info">Views: <%= results[0].views %> &ensp; Comments: ## &ensp; Likes: <%= results[0].likes %></h3>

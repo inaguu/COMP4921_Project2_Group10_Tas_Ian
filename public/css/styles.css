@@ -388,6 +388,7 @@ input[type=text] {
     color: rgba(0, 0, 0, 0.85);
     font-weight: bold;
     text-decoration: none;
+    display: inline;
 }
 .comment-author:hover {
     text-decoration: underline;
@@ -404,4 +405,12 @@ input[type=text] {
     color: white;
     font-weight: bold;
     line-height: 15px;
+}
+
+.image-comment {
+    display: inline;
+}
+
+.image-comment img {
+    border-radius: 50%;
 }

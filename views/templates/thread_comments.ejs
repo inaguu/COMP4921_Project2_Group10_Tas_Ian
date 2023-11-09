@@ -16,7 +16,12 @@
           
               <!-- Comment info (author, # of votes, time added) start -->
               <div class="comment-info">
-                <p class="comment-author">ian</p>
+                <div class="image-comment">
+                    <script type="text/javascript">document.write($.cloudinary.imageTag('<%= comments[i].image_uuid %>', {height: 25, width: 25, crop: "fit"}).toHtml());</script>
+                </div>
+                <p class="comment-author">
+                    <%= comments[i].username %>
+                </p>
               </div>
               <!-- Comment info (author, # of votes, time added) end -->
             </div>
