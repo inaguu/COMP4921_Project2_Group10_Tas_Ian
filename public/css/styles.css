@@ -414,3 +414,25 @@ input[type=text] {
 .image-comment img {
     border-radius: 50%;
 }
+
+/* upload a thread */
+.thread-info input {
+    display: block;
+    margin-bottom: 7px;
+}
+
+/* edit a thread */
+.comment-edit {
+    width: 45px;
+    height: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+.comment-edit button {
+    display: block;
+    width: 100%;
+    height: 50%;
+    padding: 0;
+    border: 0;
+    font-size: 12px;
+}

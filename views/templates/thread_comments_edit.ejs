@@ -1,0 +1,39 @@
+<% let i = 0 %>
+<div class="parent-child">
+    <% for (i = 0; i < comments.length; i++) { %>
+        <div class="comment" style="margin-left: <%= comments[i].depth * 50%>px;">
+
+            <!-- Comment heading start -->
+            <div class="comment-heading">
+          
+              <!-- Comment voting start -->
+              <div class="comment-edit">
+                <form action="/profile/delete/comment/<%= results[0].short_url %>/<%= comments[i].comment_id %>" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+              </div>
+              <!-- Comment voting end -->
+          
+              <!-- Comment info (author, # of votes, time added) start -->
+              <div class="comment-info">
+                <div class="image-comment">
+                    <script type="text/javascript">document.write($.cloudinary.imageTag('<%= comments[i].image_uuid %>', {height: 25, width: 25, crop: "fit"}).toHtml());</script>
+                </div>
+                <p class="comment-author">
+                    <%= comments[i].username %>
+                </p>
+              </div>
+              <!-- Comment info (author, # of votes, time added) end -->
+            </div>
+            <!-- Comment heading end -->
+          
+            <!-- Comment body start -->
+            <div class="comment-body">
+              <p>
+                <%= comments[i].comment %>
+              </p>
+            </div>
+        </div>
+    <% } %>
+</div>
+

@@ -149,7 +149,7 @@ async function deleteOtherComment(postData) {
 		const results = await database.query(deleteOtherCommentSQL, params);
 		console.log("Successfully deleted other comment.");
 		console.log(results[0]);
-		return results[0];
+		return true;
 	} catch (err) {
 		console.log("Error deleting other comment.");
 		console.log(err);
