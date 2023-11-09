@@ -84,8 +84,8 @@ async function getChildComments(postData) {
 			from comment_hierarchy H
 			join comment C on (H.comment_id = C.parent_id)
 			)
-		select * from comment_hierarchy;
-		order by comment_id
+		select * from comment_hierarchy
+		order by comment_id;
 	`;
 
 	let params = {
