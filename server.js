@@ -17,7 +17,8 @@ const db_comment = include("database/comment");
 const url = include("public/js/url");
 const success = db_utils.printMySQLVersion();
 
-const base_url = "http://localhost:8080";
+// const base_url = "http://localhost:8080";
+const base_url = "http://ehptakgdzb.us19.qoddiapp.com";
 const port = process.env.PORT || 8080;
 
 const app = express();
@@ -275,7 +276,7 @@ app.get("/thread/:code", async (req, res) => {
 				results: results,
 				comments: all_comments,
 				count: count,
-				user_id: req.session.user_id
+				user_id: req.session.user_id,
 			});
 		} else {
 			// a page to tell the user this thread is inactive
@@ -322,21 +323,20 @@ app.get("/thread/:short_url/like", async (req, res) => {
 
 app.post("/thread/delete/comment/:short_url/:comment_id", async (req, res) => {
 	if (!isValidSession(req)) {
-		res.redirect('/')
+		res.redirect("/");
 	} else {
 		let results = await db_comment.deleteOwnComment({
-			comment_id: req.params.comment_id
-		})
+			comment_id: req.params.comment_id,
+		});
 
-		if(results) {
-			res.redirect("/thread/" + req.params.short_url)
+		if (results) {
+			res.redirect("/thread/" + req.params.short_url);
 		} else {
-			console.log(results)
-			res.redirect("/")
+			console.log(results);
+			res.redirect("/");
 		}
 	}
-})
-
+});
 
 // thread_id becuase it is the main thread and the parent_id will be null
 app.post("/thread/:short_url/:thread_id/comment", async (req, res) => {
@@ -412,7 +412,7 @@ app.get("/profile", async (req, res) => {
 		});
 
 		if (results) {
-			if (results.length >= 1 && image_check) {
+			if (results.length >= 0 && image_check) {
 				image_uuid = image[0].image_uuid;
 
 				res.render("profile", {
@@ -471,7 +471,7 @@ app.get("/profile/thread/:short_url", async (req, res) => {
 			res.render("thread_edit", {
 				auth: req.session.authenticated,
 				results: results,
-				comments: all_comments
+				comments: all_comments,
 			});
 		} else {
 			console.log("results is empty");
@@ -526,24 +526,22 @@ app.post("/profile/upload/thread", async (req, res) => {
 	}
 });
 
-
 app.post("/profile/delete/comment/:short_url/:comment_id", async (req, res) => {
 	if (!isValidSession(req)) {
-		res.redirect('/')
+		res.redirect("/");
 	} else {
 		let results = await db_comment.deleteOtherComment({
-			comment_id: req.params.comment_id
-		})
+			comment_id: req.params.comment_id,
+		});
 
-		if(results) {
-			res.redirect("/profile/thread/" + req.params.short_url)
+		if (results) {
+			res.redirect("/profile/thread/" + req.params.short_url);
 		} else {
-			console.log(results)
-			res.redirect("/")
+			console.log(results);
+			res.redirect("/");
 		}
 	}
-})
-
+});
 
 // used for updating a thread
 app.post("/profile/update/thread/:thread_id", async (req, res) => {

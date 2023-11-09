@@ -7,7 +7,7 @@
 <div class="user-info">
     <% if (image_uuid) { %>
         <div class="image">
-            <a href="/profile/upload/image"><script type="text/javascript">document.write($.cloudinary.imageTag('<%- image_uuid %>', {height: 100, width: 100, crop: "fit"}).toHtml());</script></a>
+            <a href="/profile/upload/image"><script type="text/javascript">document.write($.cloudinary.imageTag('<%= image_uuid %>', {height: 100, width: 100, crop: "fit"}).toHtml());</script></a>
         </div>
     <% } else { %>
         <form action="/profile/upload/image" method="get">
