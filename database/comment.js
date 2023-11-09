@@ -81,7 +81,7 @@ async function getChildComments(postData) {
 		with recursive comment_hierarchy as 
 			(select comment_id, thread_id, user_id, parent_id, comment, 0 as depth
 			from comment
-			where comment_id = 3
+			where comment_id = :comment_id
 			union all
 			select C.comment_id, C.thread_id, C.user_id, C.parent_id, C.comment, H.depth+1
 			from comment_hierarchy H
