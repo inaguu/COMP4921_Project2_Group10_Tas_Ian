@@ -204,6 +204,31 @@ async function countComments(postData) {
 	}
 }
 
+async function getCommentSearch(postData) {
+	let getCommentSearchSQL = `
+		SELECT MATCH(comment) AGAINST (:search) AS score, c.*, u.username, i.image_uuid
+		FROM comment c
+		left join user u on u.user_id = c.user_id
+		left join image i on i.user_id = c.user_id
+		WHERE MATCH(comment) AGAINST (:search) > 0 and thread_id = :thread_id
+		ORDER BY score desc;
+    `;
+
+	let params = {
+		search: postData.search,
+		thread_id: postData.thread_id,
+	};
+
+	try {
+		const results = await database.query(getCommentSearchSQL, params);
+		console.log("Successfully got comments after search");
+		console.log(results[0]);
+		return results[0];
+	} catch (err) {
+		console.log("Error getting comments after search");
+	}
+}
+
 module.exports = {
 	insertComment,
 	insertReply,
@@ -213,4 +238,5 @@ module.exports = {
 	deleteOtherComment,
 	editComment,
 	countComments,
+	getCommentSearch,
 };

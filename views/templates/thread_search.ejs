@@ -1,0 +1,34 @@
+
+<div class="parent-child">
+    <div class="comment">
+
+        <!-- Comment heading start -->
+        <div class="comment-heading">
+        
+            <!-- Comment voting start -->
+            <div class="comment-voting">
+            
+            </div>
+            <!-- Comment voting end -->
+        
+            <!-- Comment info (author, # of votes, time added) start -->
+            <div class="comment-info">
+            <div class="image-comment">
+                <script type="text/javascript">document.write($.cloudinary.imageTag('<%= comments.image_uuid %>', {height: 25, width: 25, crop: "fit"}).toHtml());</script>
+            </div>
+            <p class="comment-author">
+                <%= comments.username %>
+            </p>
+            </div>
+            <!-- Comment info (author, # of votes, time added) end -->
+        </div>
+        <!-- Comment heading end -->
+        
+        <!-- Comment body start -->
+        <div class="comment-body">
+            <p>
+            <%= comments.comment %>
+            </p>
+        </div>
+    </div>
+</div>

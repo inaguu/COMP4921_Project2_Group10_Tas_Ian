@@ -199,6 +199,36 @@ app.post("/home/search", async (req, res) => {
 	});
 });
 
+app.post("/thread/search/:code", async (req, res) => {
+	let search = req.body.search;
+	let results = await db_thread.getThread({
+		short_url: req.params.code,
+	});
+
+	console.log(search);
+
+	let searchDB = await db_comment.getCommentSearch({
+		search: search,
+		thread_id: results[0].thread_id,
+	});
+	if (searchDB) {
+		let count = await db_comment.countComments({
+			thread_id: results[0].thread_id,
+		});
+
+		res.render("thread_search", {
+			auth: req.session.authenticated,
+			results: results,
+			comments: searchDB,
+			count: count,
+		});
+	} else {
+		res.redirect("*");
+	}
+
+	// res.redirect("/thread/" + req.params.short_url);
+});
+
 app.get("/thread/:code", async (req, res) => {
 	let results = await db_thread.getThread({
 		short_url: req.params.code,

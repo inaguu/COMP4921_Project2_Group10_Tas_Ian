@@ -32,22 +32,6 @@
 
 <br>
 
-<div class="thread-options">
-    <div class="like-comment">
-        <a href="/thread/<%= results[0].short_url %>/like">Like</a> /
-        <a id="thread_comment">Comment</a>
-    </div>
-</div>
-
-<div class="comment-section" style="display: none;" id="thread-comment-textarea">
-    <div class="comment-area">
-        <form action="/thread/<%= results[0].short_url %>/<%= results[0].thread_id %>/comment" class="text" method="POST">
-            <textarea name="comment_text" id="comment_text" cols="60" rows="10"></textarea>
-            <button>Post</button>
-        </form>
-    </div>
-</div>
-
 <div class="profile-divider"></div>
 
 <br>
@@ -60,10 +44,8 @@
 
 <div class="all-comments">
     <% let i = 0 %>
-    <% let textarea_num = 0 %>
     <% for (i = 0; i < comments.length; i++) { %>
-        <%- include('templates/thread_comments', {comments: comments[i], results: results, textarea_num: textarea_num}) %> 
-        <% textarea_num += comments[i].length %>
+        <%- include('templates/thread_search', {comments: comments[i], results: results}) %> 
     <% } %>
 </div>
 
