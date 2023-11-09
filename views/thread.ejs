@@ -39,12 +39,15 @@
 
 <br>
 
-<% let i = 0 %>
-<% let textarea_num = 0 %>
-<% for (i = 0; i < comments.length; i++) { %>
-    <%- include('templates/thread_comments', {comments: comments[i], results: results, textarea_num: textarea_num}) %> 
-    <% textarea_num += comments[i].length %>
-<% } %>
+<div class="all-comments">
+    <% let i = 0 %>
+    <% let textarea_num = 0 %>
+    <% for (i = 0; i < comments.length; i++) { %>
+        <%- include('templates/thread_comments', {comments: comments[i], results: results, textarea_num: textarea_num}) %> 
+        <% textarea_num += comments[i].length %>
+    <% } %>
+</div>
+
 
 <script>
     document.getElementById("thread_comment").onclick = function() {

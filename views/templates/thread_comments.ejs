@@ -1,47 +1,44 @@
-<ul>
-    <% let i = 0 %>
-    <% let last_comment_id = 0 %>
+<% let i = 0 %>
+<div class="parent-child">
     <% for (i = 0; i < comments.length; i++) { %>
-        <% if (last_comment_id == comments[i].parent_id) { %>        
-            <ul>
-                <li>
-                    <%= comments[i].comment %>
-                    <div class="thread-options">
-                        <div class="like-comment">
-                            <a href="/thread/<%= results[0].short_url %>/like">Like</a> /
-                            <a id="comment_reply" class="comment_reply">Comment</a>
-                        </div>
-                    </div>
-                    <div class="comment-section" style="display: none;" id="comment-reply-textarea-<%= textarea_num %>">
-                        <div class="comment-area">
-                            <form action="/thread/<%= results[0].short_url %>/<%= results[0].thread_id %>/<%= comments[i].comment_id %>/comment" class="text" method="POST">
-                                <textarea name="comment_text" id="comment_text" cols="60" rows="10"></textarea>
-                                <button>Post</button>
-                            </form>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        <% } else { %>
-            <li>
+        <div class="comment" style="margin-left: <%= comments[i].depth * 50%>px;">
+
+            <!-- Comment heading start -->
+            <div class="comment-heading">
+          
+              <!-- Comment voting start -->
+              <div class="comment-voting">
+                <form action="/thread/<%= results[0].short_url %>/like" method="GET">
+                    <button type="submit">Like</button>
+                </form>
+              </div>
+              <!-- Comment voting end -->
+          
+              <!-- Comment info (author, # of votes, time added) start -->
+              <div class="comment-info">
+                <p class="comment-author">ian</p>
+              </div>
+              <!-- Comment info (author, # of votes, time added) end -->
+            </div>
+            <!-- Comment heading end -->
+          
+            <!-- Comment body start -->
+            <div class="comment-body">
+              <p>
                 <%= comments[i].comment %>
-                <div class="thread-options">
-                    <div class="like-comment">
-                        <a href="/thread/<%= results[0].short_url %>/like">Like</a> /
-                        <a id="comment_reply" class="comment_reply">Comment</a>
-                    </div>
+              </p>
+              <a id="comment_reply" class="comment_reply">Reply</a>
+            </div>
+            <div class="comment-section" style="display: none;" id="comment-reply-textarea-<%= textarea_num %>">
+                <div class="comment-area">
+                    <form action="/thread/<%= results[0].short_url %>/<%= results[0].thread_id %>/<%= comments[i].comment_id %>/comment" class="text" method="POST">
+                        <textarea name="comment_text" id="comment_text" cols="60" rows="10"></textarea>
+                        <button>Post</button>
+                    </form>
                 </div>
-                <div class="comment-section" style="display: none;" id="comment-reply-textarea-<%= textarea_num %>">
-                    <div class="comment-area">
-                        <form action="/thread/<%= results[0].short_url %>/<%= results[0].thread_id %>/<%= comments[i].comment_id %>/comment" class="text" method="POST">
-                            <textarea name="comment_text" id="comment_text" cols="60" rows="10"></textarea>
-                            <button>Post</button>
-                        </form>
-                    </div>
-                </div>
-            </li>
-        <% } %>
-        <% textarea_num++ %>
-        <% last_comment_id = comments[i].comment_id %>
-    <% } %>    
-</ul>
+            </div>
+        </div>
+    <% textarea_num ++ %>
+    <% } %>
+</div>
+
