@@ -234,13 +234,13 @@ app.get("/thread/:code", async (req, res) => {
 				"all_comments from final array: " + JSON.stringify(all_comments)
 			);
 
-			console.log(all_comments)
+			console.log(all_comments);
 
 			res.render("thread", {
 				auth: req.session.authenticated,
 				results: results,
 				comments: all_comments,
-			})
+			});
 		} else {
 			// a page to tell the user this thread is inactive
 			console.log("thread is inactive");
@@ -255,19 +255,32 @@ app.get("/thread/:code", async (req, res) => {
 });
 
 app.get("/thread/:short_url/like", async (req, res) => {
-	await db_thread.updateLikeCount({
-		short_url: req.params.short_url,
-	});
-
-	let results = await db_thread.getThread({
-		short_url: req.params.short_url,
-	});
-
-	if (results) {
-		res.render("thread", {
-			auth: req.session.authenticated,
-			results: results,
+	if (!isValidSession(req)) {
+		res.redirect("/signup");
+	} else {
+		let results = await db_thread.getThread({
+			short_url: req.params.short_url,
 		});
+
+		let isLiked = await db_thread.checkUserLikes({
+			user_id: req.session.user_id,
+			thread_id: results[0].thread_id,
+		});
+
+		console.log("isLiked: " + isLiked);
+
+		if (isLiked) {
+			res.redirect("/thread/" + req.params.short_url);
+		} else {
+			await db_thread.updateLikeCount({
+				short_url: req.params.short_url,
+			});
+			await db_thread.updateUserThreadLikeBridge({
+				user_id: req.session.user_id,
+				thread_id: results[0].thread_id,
+			});
+			res.redirect("/thread/" + req.params.short_url);
+		}
 	}
 });
 
@@ -297,28 +310,31 @@ app.post("/thread/:short_url/:thread_id/comment", async (req, res) => {
 // each comment will have a button to add comments and that post ->
 // will be the comment_id when we fill the thread page with comments
 // parent_id will be the comment_id
-app.post("/thread/:short_url/:thread_id/:comment_id/comment", async (req, res) => {
-	if (!isValidSession(req)) {
-		res.redirect("/signup");
-	} else {
-		let user_id = req.session.user_id
-		let short_url = req.params.short_url
-		let thread_id = req.params.thread_id
-		let comment_id = req.params.comment_id
-		let comment_text = req.body.comment_text
+app.post(
+	"/thread/:short_url/:thread_id/:comment_id/comment",
+	async (req, res) => {
+		if (!isValidSession(req)) {
+			res.redirect("/signup");
+		} else {
+			let user_id = req.session.user_id;
+			let short_url = req.params.short_url;
+			let thread_id = req.params.thread_id;
+			let comment_id = req.params.comment_id;
+			let comment_text = req.body.comment_text;
 
-		let results = await db_comment.insertReply({
-			thread_id: thread_id,
-			user_id: user_id,
-			parent_id: comment_id,
-			comment: comment_text
-		})
+			let results = await db_comment.insertReply({
+				thread_id: thread_id,
+				user_id: user_id,
+				parent_id: comment_id,
+				comment: comment_text,
+			});
 
-		if (results) {
-			res.redirect("/thread/" + req.params.short_url)
+			if (results) {
+				res.redirect("/thread/" + req.params.short_url);
+			}
 		}
 	}
-})
+);
 
 //requires session auth
 app.get("/profile", async (req, res) => {

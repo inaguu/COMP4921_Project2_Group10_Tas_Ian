@@ -235,6 +235,57 @@ async function updateLikeCount(postData) {
 	}
 }
 
+async function checkUserLikes(postData) {
+	let checkUserLikesSQL = `
+	select user_thread_likes_bridge_id
+	from user_thread_likes_bridge
+	where user_id = :user_id and thread_id = :thread_id;
+    `;
+
+	let params = {
+		user_id: postData.user_id,
+		thread_id: postData.thread_id,
+	};
+
+	try {
+		const results = await database.query(checkUserLikesSQL, params);
+		console.log("checkUserLikesSQL return length: " + results[0].length);
+		if (results[0].length === 0) {
+			console.log("User has not liked this thread!");
+			return false;
+		} else {
+			console.log("User has already liked this thread!");
+			return true;
+		}
+	} catch (err) {
+		console.log(err);
+		return false;
+	}
+}
+
+async function updateUserThreadLikeBridge(postData) {
+	let updateUserThreadLikeBridgeSQL = `
+	INSERT INTO user_thread_likes_bridge (user_id, thread_id) 
+	VALUES (:user_id, :thread_id);
+    `;
+
+	let params = {
+		user_id: postData.user_id,
+		thread_id: postData.thread_id,
+	};
+
+	try {
+		const results = await database.query(updateUserThreadLikeBridgeSQL, params);
+		console.log("Successfully updated user_thread_likes_bridge for user like.");
+		console.log(results[0]);
+		return true;
+	} catch (err) {
+		console.log("Error updating user_thread_likes_bridge for user like.");
+		console.log(err);
+		return false;
+	}
+}
+
 module.exports = {
 	getAllThreads,
 	getUserThreads,
@@ -246,4 +297,6 @@ module.exports = {
 	getThreadTitleSearch,
 	update_view_count,
 	updateLikeCount,
+	checkUserLikes,
+	updateUserThreadLikeBridge,
 };
