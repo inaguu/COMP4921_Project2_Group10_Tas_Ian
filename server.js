@@ -245,6 +245,7 @@ app.get("/thread/:code", async (req, res) => {
 				results: results,
 				comments: all_comments,
 				count: count,
+				user_id: req.session.user_id
 			});
 		} else {
 			// a page to tell the user this thread is inactive
@@ -289,7 +290,23 @@ app.get("/thread/:short_url/like", async (req, res) => {
 	}
 });
 
-// work on thread_upload css
+app.post("/thread/delete/comment/:short_url/:comment_id", async (req, res) => {
+	if (!isValidSession(req)) {
+		res.redirect('/')
+	} else {
+		let results = await db_comment.deleteOwnComment({
+			comment_id: req.params.comment_id
+		})
+
+		if(results) {
+			res.redirect("/thread/" + req.params.short_url)
+		} else {
+			console.log(results)
+			res.redirect("/")
+		}
+	}
+})
+
 
 // thread_id becuase it is the main thread and the parent_id will be null
 app.post("/thread/:short_url/:thread_id/comment", async (req, res) => {

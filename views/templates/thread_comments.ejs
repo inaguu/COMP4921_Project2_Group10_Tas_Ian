@@ -7,11 +7,13 @@
             <div class="comment-heading">
           
               <!-- Comment voting start -->
+              <% if (user_id == comments[i].user_id) { %>
               <div class="comment-voting">
-                <form action="/thread/<%= results[0].short_url %>/like" method="GET">
-                    <button type="submit">Like</button>
+                <form action="/thread/delete/comment/<%= results[0].short_url %>/<%= comments[i].comment_id %>" method="POST">
+                    <button type="submit">Delete</button>
                 </form>
               </div>
+              <% } %>
               <!-- Comment voting end -->
           
               <!-- Comment info (author, # of votes, time added) start -->
