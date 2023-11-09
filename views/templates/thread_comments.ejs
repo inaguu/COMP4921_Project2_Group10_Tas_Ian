@@ -1,5 +1,23 @@
 <ul>
-    <% if (!comments.parent_id) { %>
-        <li><% comments.comment %></li>
-    <% } %>
+    <% let i = 0 %>
+    <% for (i = 0; i < comments.length; i++) { %>
+        <li>
+            <%= comments[i].comment %>
+            <div class="thread-options">
+                <div class="like-comment">
+                    <a href="/thread/<%= results[0].short_url %>/like">Like</a> /
+                    <a id="comment_reply" class="comment_reply">Comment</a>
+                </div>
+            </div>
+            <div class="comment-section" style="display: none;" id="comment-reply-textarea-<%= textarea_num %>">
+                <div class="comment-area">
+                    <form action="/thread/<%= results[0].short_url %>/<%= results[0].thread_id %>/<%= comments[i].comment_id %>/comment" class="text" method="POST">
+                        <textarea name="comment_text" id="comment_text" cols="60" rows="10"></textarea>
+                        <button>Post</button>
+                    </form>
+                </div>
+            </div>
+        </li>
+        <% textarea_num++ %>
+    <% } %>    
 </ul>
