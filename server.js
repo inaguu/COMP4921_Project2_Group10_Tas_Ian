@@ -275,6 +275,7 @@ app.get("/thread/:code", async (req, res) => {
 				results: results,
 				comments: all_comments,
 				count: count,
+				user_id: req.session.user_id
 			});
 		} else {
 			// a page to tell the user this thread is inactive
@@ -319,7 +320,23 @@ app.get("/thread/:short_url/like", async (req, res) => {
 	}
 });
 
-// work on thread_upload css
+app.post("/thread/delete/comment/:short_url/:comment_id", async (req, res) => {
+	if (!isValidSession(req)) {
+		res.redirect('/')
+	} else {
+		let results = await db_comment.deleteOwnComment({
+			comment_id: req.params.comment_id
+		})
+
+		if(results) {
+			res.redirect("/thread/" + req.params.short_url)
+		} else {
+			console.log(results)
+			res.redirect("/")
+		}
+	}
+})
+
 
 // thread_id becuase it is the main thread and the parent_id will be null
 app.post("/thread/:short_url/:thread_id/comment", async (req, res) => {
@@ -427,9 +444,34 @@ app.get("/profile/thread/:short_url", async (req, res) => {
 		});
 
 		if (results) {
+			let all_comments = [];
+
+			// TODO get the comments and send to thread
+			// gonna be a long? template for comments
+
+			let parent_comments = await db_comment.getParentComments({
+				thread_id: results[0].thread_id,
+			});
+
+			console.log("parent comment id: " + JSON.stringify(parent_comments));
+
+			for (let i = 0; i < parent_comments.length; i++) {
+				let success = await db_comment.getChildComments({
+					comment_id: parent_comments[i].comment_id,
+				});
+				console.log(
+					"Each parent and child comments: " + JSON.stringify(success)
+				);
+				all_comments.push(success);
+			}
+			console.log(
+				"all_comments from final array: " + JSON.stringify(all_comments)
+			);
+
 			res.render("thread_edit", {
 				auth: req.session.authenticated,
 				results: results,
+				comments: all_comments
 			});
 		} else {
 			console.log("results is empty");
@@ -483,6 +525,25 @@ app.post("/profile/upload/thread", async (req, res) => {
 		}
 	}
 });
+
+
+app.post("/profile/delete/comment/:short_url/:comment_id", async (req, res) => {
+	if (!isValidSession(req)) {
+		res.redirect('/')
+	} else {
+		let results = await db_comment.deleteOtherComment({
+			comment_id: req.params.comment_id
+		})
+
+		if(results) {
+			res.redirect("/profile/thread/" + req.params.short_url)
+		} else {
+			console.log(results)
+			res.redirect("/")
+		}
+	}
+})
+
 
 // used for updating a thread
 app.post("/profile/update/thread/:thread_id", async (req, res) => {

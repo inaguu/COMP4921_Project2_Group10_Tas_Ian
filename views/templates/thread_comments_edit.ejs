@@ -7,13 +7,11 @@
             <div class="comment-heading">
           
               <!-- Comment voting start -->
-              <% if (user_id == comments[i].user_id) { %>
-              <div class="comment-voting">
-                <form action="/thread/delete/comment/<%= results[0].short_url %>/<%= comments[i].comment_id %>" method="POST">
+              <div class="comment-edit">
+                <form action="/profile/delete/comment/<%= results[0].short_url %>/<%= comments[i].comment_id %>" method="POST">
                     <button type="submit">Delete</button>
                 </form>
               </div>
-              <% } %>
               <!-- Comment voting end -->
           
               <!-- Comment info (author, # of votes, time added) start -->
@@ -34,18 +32,8 @@
               <p>
                 <%= comments[i].comment %>
               </p>
-              <a id="comment_reply" class="comment_reply">Reply</a>
-            </div>
-            <div class="comment-section" style="display: none;" id="comment-reply-textarea-<%= textarea_num %>">
-                <div class="comment-area">
-                    <form action="/thread/<%= results[0].short_url %>/<%= results[0].thread_id %>/<%= comments[i].comment_id %>/comment" class="text" method="POST">
-                        <textarea name="comment_text" id="comment_text" cols="60" rows="10"></textarea>
-                        <button>Post</button>
-                    </form>
-                </div>
             </div>
         </div>
-    <% textarea_num ++ %>
     <% } %>
 </div>
 

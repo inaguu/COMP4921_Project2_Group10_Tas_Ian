@@ -1,18 +1,27 @@
 <%- include("templates/header") %>
 
 <div class="home-title">
-    <h1>Thread Upload</h1>
+    <h1>Thread Edit</h1>
+</div>
+
+<div class="thread-post">
+    <form action="/profile/update/thread/<%= results[0].thread_id %>" method="POST" class="thread-info">
+        <h3>Edit this Thread</h3>
+        <input required placeholder="Title" type="text" name="thread_title" id="thread_title" class="thread-title" value="<%= results[0].title %>">
+        <textarea required placeholder="Description" name="thread_desc" id="thread_desc" cols="60" rows="10"><%= results[0].description %></textarea>
+        <button class="btn btn-success" type="submit">Update</button>
+    </form>
 </div>
 
 <div class="profile-divider"></div>
 
 <br>
 
-<form action="/profile/update/thread/<%= results[0].thread_id %>" method="POST" class="thread-info">
-    <h3>Upload a Thread</h3>
-    <input required placeholder="Title" type="text" name="thread_title" id="thread_title" class="thread-title" value="<%= results[0].title %>">
-    <textarea required placeholder="Description" name="thread_desc" id="thread_desc" cols="30" rows="10"><%= results[0].description %></textarea>
-    <button class="btn btn-success" type="submit">Update</button>
-</form>
+<div class="all-comments">
+    <% let i = 0 %>
+    <% for (i = 0; i < comments.length; i++) { %>
+        <%- include('templates/thread_comments_edit', {comments: comments[i], results: results}) %> 
+    <% } %>
+</div>
 
 <%- include("templates/footer") %>
