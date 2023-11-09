@@ -3,7 +3,8 @@ const database = include("database_connection");
 async function getAllThreads(postData) {
 	let getAllThreadsSQL = `
 		SELECT *
-		FROM thread;
+		FROM thread
+		order by likes desc;	
 	`;
 
 	try {
@@ -167,22 +168,22 @@ async function updateThreadInfo(postData) {
 }
 
 async function getThreadTitleSearch(postData) {
-    let getThreadTitleSearchSQL = `
+	let getThreadTitleSearchSQL = `
 		SELECT *, MATCH(title) AGAINST (:search) AS score
 		FROM thread
 		WHERE MATCH(title) AGAINST (:search) > 0
 		ORDER BY score desc;
-    `
+    `;
 
-    let params = {
-		search: postData.search
-    }
+	let params = {
+		search: postData.search,
+	};
 
-    try {
+	try {
 		const results = await database.query(getThreadTitleSearchSQL, params);
 		console.log("Successfully got thread title after search");
-        console.log(results[0])
-		return results[0]
+		console.log(results[0]);
+		return results[0];
 	} catch (err) {
 		console.log("Error getting thread title after search");
 	}
