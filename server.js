@@ -278,18 +278,18 @@ app.post("/thread/:short_url/:thread_id/comment", async (req, res) => {
 	if (!isValidSession(req)) {
 		res.redirect("/signup");
 	} else {
-		let user_id = req.session.user_id
-		let thread_id = req.params.thread_id
-		let comment_text = req.body.comment_text
+		let user_id = req.session.user_id;
+		let thread_id = req.params.thread_id;
+		let comment_text = req.body.comment_text;
 
 		let results = await db_comment.insertComment({
 			thread_id: thread_id,
 			user_id: user_id,
-			comment: comment_text
-		})
+			comment: comment_text,
+		});
 
 		if (results) {
-			res.redirect("/thread/" + req.params.short_url)
+			res.redirect("/thread/" + req.params.short_url);
 		}
 	}
 });

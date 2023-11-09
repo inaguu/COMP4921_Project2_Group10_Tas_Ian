@@ -16,7 +16,7 @@ async function insertComment(postData) {
 		const results = await database.query(insertCommentSQL, params);
 		console.log("Successfully added a comment.");
 		console.log(results[0]);
-		return true
+		return true;
 	} catch (err) {
 		console.log("Error adding a comment.");
 		console.log(err);
@@ -42,7 +42,7 @@ async function insertReply(postData) {
 		const results = await database.query(insertReplySQL, params);
 		console.log("Successfully added a reply.");
 		console.log(results[0]);
-		return true
+		return true;
 	} catch (err) {
 		console.log("Error adding a reply.");
 		console.log(err);
@@ -76,15 +76,16 @@ async function getParentComments(postData) {
 async function getChildComments(postData) {
 	let getChildCommentsSQL = `
 		with recursive comment_hierarchy as 
-			(select comment_id, thread_id, user_id, parent_id, comment
+			(select comment_id, thread_id, user_id, parent_id, comment, 0 as depth
 			from comment
 			where comment_id = :comment_id
-			union
-			(select C.comment_id, C.thread_id, C.user_id, C.parent_id, C.comment
-			from comment C
-			join comment_hierarchy H on H.comment_id = C.parent_id)
+			union all
+			select C.comment_id, C.thread_id, C.user_id, C.parent_id, C.comment, H.depth+1
+			from comment_hierarchy H
+			join comment C on (H.comment_id = C.parent_id)
 			)
 		select * from comment_hierarchy;
+		order by comment_id
 	`;
 
 	let params = {
