@@ -181,6 +181,29 @@ async function editComment(postData) {
 	}
 }
 
+async function countComments(postData) {
+	let countCommentsSQL = `
+		select count(comment_id) as comments
+		from comment
+		where thread_id = :thread_id;
+	`;
+
+	let params = {
+		thread_id: postData.thread_id,
+	};
+
+	try {
+		const results = await database.query(countCommentsSQL, params);
+		console.log("Successfully retrieved comments count.");
+		console.log(results[0]);
+		return results[0];
+	} catch (err) {
+		console.log("Error retrieving comments count.");
+		console.log(err);
+		return false;
+	}
+}
+
 module.exports = {
 	insertComment,
 	insertReply,
@@ -189,4 +212,5 @@ module.exports = {
 	deleteOwnComment,
 	deleteOtherComment,
 	editComment,
+	countComments,
 };
