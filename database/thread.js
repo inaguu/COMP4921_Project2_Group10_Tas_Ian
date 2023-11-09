@@ -96,9 +96,10 @@ async function getThreadRow(postData) {
 
 async function getThread(postData) {
 	let getThreadSQL = `
-        SELECT *
-        FROM thread
-        WHERE short_url = :short_url;
+		SELECT T.*, I.image_uuid
+		FROM thread T
+		left join image I on (T.user_id = I.user_id)
+		WHERE short_url = :short_url;
     `;
 
 	let params = {
